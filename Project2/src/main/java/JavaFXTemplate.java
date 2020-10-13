@@ -22,14 +22,12 @@ public class JavaFXTemplate extends Application {
 		
 		private EventHandler<ActionEvent> myHandler;
 		
-		private int test = 0;
+		private int test = 1;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(args);
 	}
-
-	//SIDNEY THIS IS NOT WORKING WHYYYYYYYYY
 
 	//feel free to remove the starter code from this method
 	@Override
