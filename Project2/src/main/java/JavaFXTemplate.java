@@ -22,7 +22,8 @@ public class JavaFXTemplate extends Application {
 		
 		private EventHandler<ActionEvent> myHandler;
 		
-		private int test = 1;
+		private int test = -1;
+		//why
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
