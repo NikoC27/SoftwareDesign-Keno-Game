@@ -28,6 +28,8 @@ public class JavaFXTemplate extends Application {
 		launch(args);
 	}
 
+	//SIDNEY THIS IS NOT WORKING WHYYYYYYYYY
+
 	//feel free to remove the starter code from this method
 	@Override
 	public void start(Stage primaryStage) throws Exception {
