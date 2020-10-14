@@ -89,13 +89,13 @@ public class JavaFXTemplate extends Application {
 		grid.setAlignment(Pos.CENTER);
 		addGrid(grid); //populate the GridPane with buttons
 
-		//create a scene with the GridPane as the root
-		Scene scene = new Scene(grid,700,700);
+		VBox verticalB = new VBox(20,menu,b1,t1);
+		verticalB.getChildren().addAll(grid);
 
-		
 		//new scene with root node
-		//Scene scene = new Scene(new VBox(20,menu,b1,t1), 700,700);
-		primaryStage.setScene(scene); //set the scene in the stage
+		Scene sceneM = new Scene(verticalB, 700,700);
+
+		primaryStage.setScene(sceneM); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
 	}
 	
@@ -104,14 +104,11 @@ public class JavaFXTemplate extends Application {
 	 */
 	public void addGrid(GridPane grid) {
 		
-		for(int x = 0; x<4; x++) {
-			
-		
-			for(int i = 0; i<4; i++) {
-				Button b1 = new Button(Integer.toString(i));
+		for(int x = 0; x<8; x++) {
+			for(int i = 0; i<10; i++) {
+				Button b1 = new Button(Integer.toString(1+i+x*10));
 				b1.setOnAction(myHandler);
-				grid.add(b1, x, i);
-				 
+				grid.add(b1, i, x);
 			}
 		}
 	}
