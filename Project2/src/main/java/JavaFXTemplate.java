@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,6 +15,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
+import javax.swing.*;
+
 public class JavaFXTemplate extends Application {
 
 		private Button b1;
@@ -21,8 +24,12 @@ public class JavaFXTemplate extends Application {
 		private TextField t1;
 		
 		private MenuBar menu;
-		
+
 		private EventHandler<ActionEvent> myHandler;
+
+		private EventHandler<ActionEvent> spotGridEvents;
+
+		private boolean spotSelected;
 
 
 	public static void main(String[] args) {
@@ -38,6 +45,7 @@ public class JavaFXTemplate extends Application {
 		
 		b1 = new Button();
 		t1 = new TextField();
+		spotSelected = false;
 		
 		/*//create an event handler if more than one widget needs same action
 		EventHandler<ActionEvent> myHandler = new EventHandler<ActionEvent>() {
@@ -86,6 +94,14 @@ public class JavaFXTemplate extends Application {
 			}
 		};
 
+		spotGridEvents = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				Button b1 = (Button)e.getSource();
+				b1.setDisable(true);
+
+			}
+		};
+
 		GridPane grid = new GridPane();
 		GridPane spotGrid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
@@ -99,8 +115,13 @@ public class JavaFXTemplate extends Application {
 		rules(t1);
 		VBox verticalB = new VBox(25,menu,spotGrid,t1);
 		verticalB.getChildren().addAll(grid);
-		toggleGrid(grid, true);
 
+		if(spotSelected == false) {
+			toggleGrid(grid, true);
+		}
+		else{
+			toggleGrid(grid, false);
+		}
 		//new scene with root node
 		Scene sceneM = new Scene(verticalB, 1000,700);
 
@@ -131,6 +152,9 @@ public class JavaFXTemplate extends Application {
 			}
 		}
 	}
+
+	//adds the spots choice location
+
 	/*
 	 * method to populate a GridPane with buttons and attach a handler to each button
 	 * Spots
@@ -144,7 +168,7 @@ public class JavaFXTemplate extends Application {
 			Button spots = new Button(Integer.toString(spotsArr[i]));
 			spots.setMinWidth(40.0);
 			spots.setMinHeight(40.0);
-			spots.setOnAction(myHandler);
+			spots.setOnAction(spotGridEvents);
 			grid.add(spots,i,0);
 		}
 	}
@@ -165,5 +189,9 @@ public class JavaFXTemplate extends Application {
 			"the numbers that are randomly drawn.\n";
 
 		t1.setText(kenoRules);
+	}
+
+	public boolean selectedOption(boolean spotSelected){
+		return spotSelected;
 	}
 }
