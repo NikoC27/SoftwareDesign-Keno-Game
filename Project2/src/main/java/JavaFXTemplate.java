@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
@@ -61,23 +62,22 @@ public class JavaFXTemplate extends Application {
 //		b1.setOnAction(e->t1.setText("I love this syntax!!!!"));
 		
 		menu = new MenuBar(); //a menu bar takes menus as children
-		Menu mOne = new Menu("option 1"); //a menu goes inside a menu bar
-		Menu mTwo = new Menu("option 2");
+		Menu rulesMenu = new Menu("Rules of the Game"); //a menu goes inside a menu bar
+		Menu winningsMenu = new Menu("Odds of Winning");
 		
 		MenuItem iOne = new MenuItem("click me"); //menu items go inside a menu
 		
 		//event handler for menu item
 		iOne.setOnAction(e->t1.setText("menu item was clicked")); 
 		
-		mOne.getItems().add(iOne); //add menu item to first menu
+		rulesMenu.getItems().add(iOne); //add menu item to first menu
 		
-		menu.getMenus().addAll(mOne, mTwo); //add two menus to the menu bar
+		menu.getMenus().addAll(rulesMenu, winningsMenu); //add two menus to the menu bar
 		
 		// This code demonstrates how to use a GridPane. Might be useful for your project
 
 		// event handler is attached to each button in the GridPane
 		myHandler = new EventHandler<ActionEvent>() {
-
 			public void handle(ActionEvent e) {
 				System.out.println("button pressed: " + ((Button)e.getSource()).getText());
 				Button b1 = (Button)e.getSource();
@@ -86,10 +86,11 @@ public class JavaFXTemplate extends Application {
 		};
 
 		GridPane grid = new GridPane();
+		GridPane spotGrid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		addBetCard(grid); //populate the GridPane with buttons
-		GridPane spotGrid = new GridPane();
-		grid.setAlignment((Pos.CENTER));
+
+		spotGrid.setAlignment((Pos.CENTER));
 		addSpots(spotGrid);
 
 
@@ -98,7 +99,7 @@ public class JavaFXTemplate extends Application {
 		verticalB.getChildren().addAll(grid);
 
 		//new scene with root node
-		Scene sceneM = new Scene(verticalB, 700,700);
+		Scene sceneM = new Scene(verticalB, 1000,700);
 
 		primaryStage.setScene(sceneM); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
@@ -117,6 +118,12 @@ public class JavaFXTemplate extends Application {
 				bets.setOnAction(myHandler);
 				grid.add(bets, i, x);
 			}
+		}
+	}
+
+	public void toggleGrid(GridPane grid, boolean toggle) {
+		for(Node child: grid.getChildren()){
+			child.setDisable(toggle);
 		}
 	}
 
