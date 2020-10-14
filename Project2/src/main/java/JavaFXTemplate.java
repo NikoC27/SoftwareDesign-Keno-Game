@@ -89,6 +89,7 @@ public class JavaFXTemplate extends Application {
 		grid.setAlignment(Pos.CENTER);
 		addGrid(grid); //populate the GridPane with buttons
 
+		//Creating the vertical box
 		VBox verticalB = new VBox(20,menu,b1,t1);
 		verticalB.getChildren().addAll(grid);
 
