@@ -87,7 +87,7 @@ public class JavaFXTemplate extends Application {
 
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
-		addGrid(grid); //populate the GridPane with buttons
+		addBetCard(grid); //populate the GridPane with buttons
 
 		//Creating the vertical box
 		VBox verticalB = new VBox(20,menu,b1,t1);
@@ -103,15 +103,23 @@ public class JavaFXTemplate extends Application {
 	/*
 	 * method to populate a GridPane with buttons and attach a handler to each button
 	 */
-	public void addGrid(GridPane grid) {
+	public void addBetCard(GridPane grid) {
 		
 		for(int x = 0; x<8; x++) {
 			for(int i = 0; i<10; i++) {
 				Button b1 = new Button(Integer.toString(1+i+x*10));
+				b1.setMinHeight(40.0);
+				b1.setMinWidth(40.0);
 				b1.setOnAction(myHandler);
 				grid.add(b1, i, x);
 			}
 		}
+	}
+
+
+	public void addSpots()
+	{
+
 	}
 
 }
