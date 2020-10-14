@@ -32,9 +32,9 @@ public class JavaFXTemplate extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
-		primaryStage.setTitle("Welcome to JavaFX");
+		primaryStage.setTitle("Welcome to Keno");
 		
-		b1 = new Button("button 1");
+		b1 = new Button();
 		t1 = new TextField();
 		
 		/*//create an event handler if more than one widget needs same action
@@ -58,7 +58,7 @@ public class JavaFXTemplate extends Application {
 		*/
 		
 		//use a lambda expression to attach the event handler to a button
-		b1.setOnAction(e->t1.setText("I love this syntax!!!!"));
+//		b1.setOnAction(e->t1.setText("I love this syntax!!!!"));
 		
 		menu = new MenuBar(); //a menu bar takes menus as children
 		Menu mOne = new Menu("option 1"); //a menu goes inside a menu bar
@@ -88,10 +88,14 @@ public class JavaFXTemplate extends Application {
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		addBetCard(grid); //populate the GridPane with buttons
+		GridPane spotGrid = new GridPane();
+		grid.setAlignment((Pos.CENTER));
+		addSpots(spotGrid);
+
 
 		//Creating the vertical box
-		VBox verticalB = new VBox(20,menu,b1,t1);
-		verticalB.getChildren().addAll(grid);
+		VBox verticalB = new VBox(25,menu,b1,t1);
+		verticalB.getChildren().addAll(spotGrid, grid);
 
 		//new scene with root node
 		Scene sceneM = new Scene(verticalB, 700,700);
@@ -117,15 +121,15 @@ public class JavaFXTemplate extends Application {
 	}
 
 
-	public void addSpots()
+	public void addSpots(GridPane grid)
 	{
 		for(int i = 0; i < 10; i++)
 		{
 			Button spots = new Button(Integer.toString(i + 1));
-			spots.setMinWidth(20.0);
-			spots.setMinWidth(20.0);
+			spots.setMinWidth(40.0);
+			spots.setMinWidth(40.0);
 			spots.setOnAction(myHandler);
+			grid.add(spots,i,0);
 		}
 	}
-
 }
