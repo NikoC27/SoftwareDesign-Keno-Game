@@ -1,8 +1,8 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,10 +12,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 
-import javax.swing.*;
 
 public class JavaFXTemplate extends Application {
 
@@ -25,11 +27,9 @@ public class JavaFXTemplate extends Application {
 		
 		private MenuBar menu;
 
+		private Text txt;
+
 		private EventHandler<ActionEvent> myHandler;
-
-		private EventHandler<ActionEvent> spotGridEvents;
-
-		private boolean spotSelected;
 
 
 	public static void main(String[] args) {
@@ -45,7 +45,7 @@ public class JavaFXTemplate extends Application {
 		
 		b1 = new Button();
 		t1 = new TextField();
-		spotSelected = false;
+		txt = new Text();
 		
 		/*//create an event handler if more than one widget needs same action
 		EventHandler<ActionEvent> myHandler = new EventHandler<ActionEvent>() {
@@ -94,14 +94,6 @@ public class JavaFXTemplate extends Application {
 			}
 		};
 
-		spotGridEvents = new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e) {
-				Button b1 = (Button)e.getSource();
-				b1.setDisable(true);
-
-			}
-		};
-
 		GridPane grid = new GridPane();
 		GridPane spotGrid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
@@ -112,16 +104,11 @@ public class JavaFXTemplate extends Application {
 
 
 		//Creating the vertical box
-		rules(t1);
-		VBox verticalB = new VBox(25,menu,spotGrid,t1);
+		rules(txt);
+		VBox verticalB = new VBox(25,menu,spotGrid,txt);
 		verticalB.getChildren().addAll(grid);
+		toggleGrid(grid, true);
 
-		if(spotSelected == false) {
-			toggleGrid(grid, true);
-		}
-		else{
-			toggleGrid(grid, false);
-		}
 		//new scene with root node
 		Scene sceneM = new Scene(verticalB, 1000,700);
 
@@ -152,9 +139,6 @@ public class JavaFXTemplate extends Application {
 			}
 		}
 	}
-
-	//adds the spots choice location
-
 	/*
 	 * method to populate a GridPane with buttons and attach a handler to each button
 	 * Spots
@@ -168,30 +152,31 @@ public class JavaFXTemplate extends Application {
 			Button spots = new Button(Integer.toString(spotsArr[i]));
 			spots.setMinWidth(40.0);
 			spots.setMinHeight(40.0);
-			spots.setOnAction(spotGridEvents);
+			spots.setOnAction(myHandler);
 			grid.add(spots,i,0);
 		}
 	}
 
 
-	public void rules(TextField t1)
+	public void rules(Text txt)
 	{
-		t1.setMinHeight(300.0);
-		t1.setMaxHeight(300.0);
-
 		String kenoRules = "Rules of Keno Gambling Game: \n" +
 		"Players wager by choosing a set amount of numbers" +
-				"(pick 2 numbers, pick 10 numbers, etc.) ranging\n" +
-		"from 1 to 80. After all players have made their wagers\n" +
-		"and picked their numbers, twenty numbers are drawn at random,\n" +
-			"between 1 and 80 with no duplicates.\n" +
-			"Players win by matching a set amount of their numbers to\n" +
-			"the numbers that are randomly drawn.\n";
+				"\n (pick 2 numbers, pick 10 numbers, etc.)" +
+		" ranging from 1 to 80.\n After all players have made their wagers" +
+		" and picked their numbers,\n twenty numbers are drawn at random," +
+			" between 1 and 80 with no\n duplicates." +
+			" Players win by matching a set amount of their\n numbers to" +
+			" the numbers that are randomly drawn.\n";
 
-		t1.setText(kenoRules);
+		txt.setFont(Font.font(20));
+		txt.setText(kenoRules);
+		txt.setTextAlignment(TextAlignment.CENTER);
+
 	}
 
-	public boolean selectedOption(boolean spotSelected){
-		return spotSelected;
+	public void odds(Text txt)
+	{
+
 	}
 }
