@@ -94,8 +94,8 @@ public class JavaFXTemplate extends Application {
 
 
 		//Creating the vertical box
-		VBox verticalB = new VBox(25,menu,b1,t1);
-		verticalB.getChildren().addAll(spotGrid, grid);
+		VBox verticalB = new VBox(25,menu,spotGrid,t1);
+		verticalB.getChildren().addAll(grid);
 
 		//new scene with root node
 		Scene sceneM = new Scene(verticalB, 700,700);
