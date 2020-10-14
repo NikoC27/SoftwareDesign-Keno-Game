@@ -107,11 +107,11 @@ public class JavaFXTemplate extends Application {
 		
 		for(int x = 0; x<8; x++) {
 			for(int i = 0; i<10; i++) {
-				Button b1 = new Button(Integer.toString(1+i+x*10));
-				b1.setMinHeight(40.0);
-				b1.setMinWidth(40.0);
-				b1.setOnAction(myHandler);
-				grid.add(b1, i, x);
+				Button bets = new Button(Integer.toString(1+i+x*10));
+				bets.setMinHeight(40.0);
+				bets.setMinWidth(40.0);
+				bets.setOnAction(myHandler);
+				grid.add(bets, i, x);
 			}
 		}
 	}
@@ -119,7 +119,13 @@ public class JavaFXTemplate extends Application {
 
 	public void addSpots()
 	{
-
+		for(int i = 0; i < 10; i++)
+		{
+			Button spots = new Button(Integer.toString(i + 1));
+			spots.setMinWidth(20.0);
+			spots.setMinWidth(20.0);
+			spots.setOnAction(myHandler);
+		}
 	}
 
 }
