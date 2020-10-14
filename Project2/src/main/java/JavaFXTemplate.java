@@ -177,6 +177,6 @@ public class JavaFXTemplate extends Application {
 
 	public void odds(Text txt)
 	{
-
+		// To do:
 	}
 }
