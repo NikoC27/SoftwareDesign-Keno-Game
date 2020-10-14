@@ -128,6 +128,7 @@ public class JavaFXTemplate extends Application {
 		}
 	}
 
+	//adds the spots choice location
 	public void addSpots(GridPane grid)
 	{
 		for(int i = 0; i < 10; i++)
