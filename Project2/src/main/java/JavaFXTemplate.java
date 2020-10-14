@@ -97,6 +97,7 @@ public class JavaFXTemplate extends Application {
 		//Creating the vertical box
 		VBox verticalB = new VBox(25,menu,spotGrid,t1);
 		verticalB.getChildren().addAll(grid);
+		toggleGrid(grid, true);
 
 		//new scene with root node
 		Scene sceneM = new Scene(verticalB, 1000,700);
@@ -104,7 +105,13 @@ public class JavaFXTemplate extends Application {
 		primaryStage.setScene(sceneM); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
 	}
-	
+
+	public void toggleGrid(GridPane grid, boolean booleanToggle) {
+		for(Node child: grid.getChildren()){
+			child.setDisable(booleanToggle);
+		}
+	}
+
 	/*
 	 * method to populate a GridPane with buttons and attach a handler to each button
 	 */
@@ -120,13 +127,6 @@ public class JavaFXTemplate extends Application {
 			}
 		}
 	}
-
-	public void toggleGrid(GridPane grid, boolean toggle) {
-		for(Node child: grid.getChildren()){
-			child.setDisable(toggle);
-		}
-	}
-
 
 	public void addSpots(GridPane grid)
 	{
