@@ -21,9 +21,7 @@ public class JavaFXTemplate extends Application {
 		private MenuBar menu;
 		
 		private EventHandler<ActionEvent> myHandler;
-		
-		private int test = -1;
-		//why
+
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -75,28 +73,28 @@ public class JavaFXTemplate extends Application {
 		
 		menu.getMenus().addAll(mOne, mTwo); //add two menus to the menu bar
 		
-		/* This code demonstrates how to use a GridPane. Might be useful for your project
-		
-		//event handler is attached to each button in the GridPane
+		// This code demonstrates how to use a GridPane. Might be useful for your project
+
+		// event handler is attached to each button in the GridPane
 		myHandler = new EventHandler<ActionEvent>() {
-			
+
 			public void handle(ActionEvent e) {
 				System.out.println("button pressed: " + ((Button)e.getSource()).getText());
 				Button b1 = (Button)e.getSource();
 				b1.setDisable(true);
 			}
 		};
-		
+
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		addGrid(grid); //populate the GridPane with buttons
-		
+
 		//create a scene with the GridPane as the root
 		Scene scene = new Scene(grid,700,700);
-		*/
+
 		
 		//new scene with root node
-		Scene scene = new Scene(new VBox(20,menu,b1,t1), 700,700);
+		//Scene scene = new Scene(new VBox(20,menu,b1,t1), 700,700);
 		primaryStage.setScene(scene); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
 	}
