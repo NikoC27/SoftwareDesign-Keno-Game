@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
 public class JavaFXTemplate extends Application {
 
@@ -95,6 +96,7 @@ public class JavaFXTemplate extends Application {
 
 
 		//Creating the vertical box
+		rules(t1);
 		VBox verticalB = new VBox(25,menu,spotGrid,t1);
 		verticalB.getChildren().addAll(grid);
 		toggleGrid(grid, true);
@@ -114,6 +116,7 @@ public class JavaFXTemplate extends Application {
 
 	/*
 	 * method to populate a GridPane with buttons and attach a handler to each button
+	 * Bet Card
 	 */
 	public void addBetCard(GridPane grid) {
 		
@@ -123,21 +126,44 @@ public class JavaFXTemplate extends Application {
 				bets.setMinHeight(40.0);
 				bets.setMinWidth(40.0);
 				bets.setOnAction(myHandler);
+				bets.setDisable(true);
 				grid.add(bets, i, x);
 			}
 		}
 	}
-
-	//adds the spots choice location
+	/*
+	 * method to populate a GridPane with buttons and attach a handler to each button
+	 * Spots
+	 */
 	public void addSpots(GridPane grid)
 	{
-		for(int i = 0; i < 10; i++)
+		int spotsArr[] = {1, 4, 8, 10};
+
+		for(int i = 0; i < 4; i++)
 		{
-			Button spots = new Button(Integer.toString(i + 1));
+			Button spots = new Button(Integer.toString(spotsArr[i]));
 			spots.setMinWidth(40.0);
-			spots.setMinWidth(40.0);
+			spots.setMinHeight(40.0);
 			spots.setOnAction(myHandler);
 			grid.add(spots,i,0);
 		}
+	}
+
+
+	public void rules(TextField t1)
+	{
+		t1.setMinHeight(300.0);
+		t1.setMaxHeight(300.0);
+
+		String kenoRules = "Rules of Keno Gambling Game: \n" +
+		"Players wager by choosing a set amount of numbers" +
+				"(pick 2 numbers, pick 10 numbers, etc.) ranging\n" +
+		"from 1 to 80. After all players have made their wagers\n" +
+		"and picked their numbers, twenty numbers are drawn at random,\n" +
+			"between 1 and 80 with no duplicates.\n" +
+			"Players win by matching a set amount of their numbers to\n" +
+			"the numbers that are randomly drawn.\n";
+
+		t1.setText(kenoRules);
 	}
 }
