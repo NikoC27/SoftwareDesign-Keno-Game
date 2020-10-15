@@ -55,11 +55,12 @@ public class JavaFXTemplate extends Application {
 		launch(args);
 	}
 
-	//method to create our first scene with controls
+	/**Create the Scene for the Game**/
 	public Scene createGameScene() {
 		BorderPane pane = new BorderPane();
 		pane.setStyle("-fx-background-color: maroon;");
 
+		/**This is the game grid initialization for spot and grid**/
 		GridPane grid = new GridPane();
 		GridPane spotGrid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
@@ -69,10 +70,9 @@ public class JavaFXTemplate extends Application {
 		VBox verticalB = new VBox(25,menu,spotGrid);
 		verticalB.getChildren().addAll(grid);
 		toggleGrid(grid, true);
-
 		pane.setCenter(verticalB);
 
-		//Adds the buttons into the grid
+		/**Adds the button into the grid**/
 		addBetCard(grid);
 		addSpots(spotGrid);
 
@@ -80,11 +80,12 @@ public class JavaFXTemplate extends Application {
 		return new Scene(pane, 1000,700);
 	}
 
+	/** Creates a scene for the rules **/
 	public Scene createRulesScene(){
 		BorderPane rulesPane = new BorderPane();
 
 		rulesPane.setStyle("-fx-background-color: maroon;");
-		rulesPane.setBottom(returnButton);
+		rulesPane.setBottom(returnButton); //We can access return button because it is a class variable
 
 		String kenoRules = "Rules of Keno Gambling Game: \n" +
 				"Players wager by choosing a set amount of numbers" +
@@ -129,7 +130,7 @@ public class JavaFXTemplate extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Welcome to Keno");
-		returnButton = new Button("Return to Game");
+		returnButton = new Button("Return to Game");  //This is from the private variable in the class
 		txt = new Text();
 		
 		/*//create an event handler if more than one widget needs same action
@@ -165,14 +166,15 @@ public class JavaFXTemplate extends Application {
 		MenuItem exitGame = new MenuItem("Exit Game");
 		menu.getMenus().addAll(optionMenu);
 
-		//Putting menu items into the menu (The drop down menu)
+		/**Putting menu items into the menu (The drop down menu)**/
 		optionMenu.getItems().add(rulesMenu); //add menu item to first menu
 		optionMenu.getItems().add(winningsMenu);
 		optionMenu.getItems().add(newLook);
 		optionMenu.getItems().add(exitGame);
 
-		//
+		//Change the scene to the rules menu
 		rulesMenu.setOnAction(e->primaryStage.setScene(createRulesScene()));
+		//Exit the Code
 		exitGame.setOnAction((e->exit()));
 
 //		winningsMenu.setOnAction(e->primaryStage.setScene();
@@ -205,11 +207,15 @@ public class JavaFXTemplate extends Application {
 
 		/*********************************************************************************************************/
 
+		/**This makes the return button go to the game scene(Temporary)**/
 		returnButton.setOnAction(e->primaryStage.setScene(createGameScene()));
+
+		/**Sets the game scene immediately (Temporary)**/
 		primaryStage.setScene(createGameScene()); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
 	}
 
+	/**Completely change the entire board to Enabled/Disabled**/
 	public void toggleGrid(GridPane grid, boolean booleanToggle) {
 		for(Node child: grid.getChildren()){
 			child.setDisable(booleanToggle);
