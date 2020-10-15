@@ -20,6 +20,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -36,9 +37,15 @@ public class JavaFXTemplate extends Application {
 
 		private Text txt;
 
-		private EventHandler<ActionEvent> myHandler;
+		private EventHandler<ActionEvent> betHandler;
+
+		private EventHandler<ActionEvent> spotHandler;
 
 		private PauseTransition pause = new PauseTransition(Duration.seconds(3));
+
+		private ArrayList<String> betStrings;
+
+		private ArrayList<String> spotStrings;
 
 
 
@@ -172,12 +179,26 @@ public class JavaFXTemplate extends Application {
 		primaryStage.show();
 		/*********************************************************************************************************/
 
-		/** Temporary EVENTHANDLER **/
+		/** EVENTHANDLERS **/
 		/*********************************************************************************************************/
-		myHandler = new EventHandler<ActionEvent>() {
+		betHandler = new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				System.out.println("button pressed: " + ((Button)e.getSource()).getText());
+				//System.out.println("button pressed: " + ((Button)e.getSource()).getText());
 				Button b1 = (Button)e.getSource();
+				String buttonNum = ((Button)e.getSource()).getText();
+				b1.setDisable(true);
+				betStrings.add(buttonNum);
+			}
+		};
+
+
+		spotHandler = new EventHandler<ActionEvent>(){
+			public void handle(ActionEvent e) {
+				Button b1 =(Button)e.getSource();
+				String buttonNum = ((Button)e.getSource()).getText();
+				//System.out.println(buttonNum);
+				spotStrings.add(buttonNum);
+				//System.out.println(spotStrings.size());
 				b1.setDisable(true);
 			}
 		};
@@ -206,7 +227,7 @@ public class JavaFXTemplate extends Application {
 				Button bets = new Button(Integer.toString(1+i+x*10));
 				bets.setMinHeight(40.0);
 				bets.setMinWidth(40.0);
-				bets.setOnAction(myHandler);
+				bets.setOnAction(betHandler);
 				bets.setDisable(true);
 				grid.add(bets, i, x);
 			}
@@ -226,8 +247,30 @@ public class JavaFXTemplate extends Application {
 			Button spots = new Button(Integer.toString(spotsArr[i]));
 			spots.setMinWidth(40.0);
 			spots.setMinHeight(40.0);
-			spots.setOnAction(myHandler);
+			spots.setOnAction(spotHandler);
 			grid.add(spots,i,0);
 		}
+	}
+
+
+	public void odds(Text txt)
+	{
+
+	}
+
+
+	// Return the string of the button that was pressed
+	public String spotNum()
+	{
+		for(int i = 0; i < spotStrings.size(); i++)
+		{
+			if(spotStrings.get(i) == "1" | spotStrings.get(i) == "4"|
+					spotStrings.get(i) == "8" | spotStrings.get(i) == "10")
+			{
+				return spotStrings.get(i);
+			}
+		}
+
+		return "";
 	}
 }
