@@ -2,7 +2,6 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,7 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
@@ -69,20 +67,22 @@ public class JavaFXTemplate extends Application {
 		
 		//use a lambda expression to attach the event handler to a button
 //		b1.setOnAction(e->t1.setText("I love this syntax!!!!"));
-		
+
 		menu = new MenuBar(); //a menu bar takes menus as children
-		Menu rulesMenu = new Menu("Rules of the Game"); //a menu goes inside a menu bar
-		Menu winningsMenu = new Menu("Odds of Winning");
-		
+		Menu optionMenu = new Menu("Menu");
+		MenuItem rulesMenu = new MenuItem("Rules of the Game"); //a menu goes inside a menu bar
+		MenuItem winningsMenu = new MenuItem("Odds of Winning");
+
 		MenuItem iOne = new MenuItem("click me"); //menu items go inside a menu
-		
+		menu.getMenus().addAll(optionMenu);
+
 		//event handler for menu item
-		iOne.setOnAction(e->t1.setText("menu item was clicked")); 
-		
-		rulesMenu.getItems().add(iOne); //add menu item to first menu
-		
-		menu.getMenus().addAll(rulesMenu, winningsMenu); //add two menus to the menu bar
-		
+		rulesMenu.setOnAction(rules(txt));
+
+		optionMenu.getItems().add(rulesMenu); //add menu item to first menu
+		optionMenu.getItems().add(winningsMenu);
+
+
 		// This code demonstrates how to use a GridPane. Might be useful for your project
 
 		// event handler is attached to each button in the GridPane
@@ -104,9 +104,9 @@ public class JavaFXTemplate extends Application {
 
 
 		//Creating the vertical box
-		rules(txt);
-		VBox verticalB = new VBox(25,menu,spotGrid,txt);
-		verticalB.getChildren().addAll(grid);
+
+		VBox verticalB = new VBox(25,menu,spotGrid);
+		verticalB.getChildren().addAll(grid,txt);
 		toggleGrid(grid, true);
 
 		//new scene with root node
@@ -158,7 +158,7 @@ public class JavaFXTemplate extends Application {
 	}
 
 
-	public void rules(Text txt)
+	public EventHandler<ActionEvent> rules(Text txt)
 	{
 		String kenoRules = "Rules of Keno Gambling Game: \n" +
 		"Players wager by choosing a set amount of numbers" +
@@ -173,10 +173,11 @@ public class JavaFXTemplate extends Application {
 		txt.setText(kenoRules);
 		txt.setTextAlignment(TextAlignment.CENTER);
 
+		return null;
 	}
 
 	public void odds(Text txt)
 	{
-		// To do:
+
 	}
 }
