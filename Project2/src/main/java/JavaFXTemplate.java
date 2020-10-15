@@ -1,6 +1,8 @@
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -9,12 +11,16 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
+
+import java.util.HashMap;
 
 
 public class JavaFXTemplate extends Application {
@@ -29,17 +35,40 @@ public class JavaFXTemplate extends Application {
 
 		private EventHandler<ActionEvent> myHandler;
 
+		private HashMap<String, Scene> sceneMap;
+
+		private PauseTransition pause = new PauseTransition(Duration.seconds(3));
+
+
+
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		launch(args);
 	}
 
+	//method to create our first scene with controls
+//	public Scene createControlScene() {
+//
+//		BorderPane pane = new BorderPane();
+//		pane.setPadding(new Insets(70));
+//
+//		VBox paneCenter = new VBox(10, text, addToListBtn, printListBtn, displayQueueItems);
+//
+//		pane.setCenter(paneCenter);
+//		pane.setLeft(sceneChangeBtn);
+//		pane.setStyle("-fx-background-color: lightPink;");
+//
+//
+//		return new Scene(pane, 850, 750);
+//	}
+
 	//feel free to remove the starter code from this method
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// TODO Auto-generated method stub
+		sceneMap = new HashMap<String,Scene>();
 		primaryStage.setTitle("Welcome to Keno");
+
 		
 		b1 = new Button();
 		t1 = new TextField();
