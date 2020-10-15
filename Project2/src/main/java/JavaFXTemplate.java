@@ -35,9 +35,17 @@ public class JavaFXTemplate extends Application {
 		
 		private MenuBar menu;
 
-		private Text txt;
+		private Text rulesTxt;
 
-		private EventHandler<ActionEvent> betHandler;
+        private Text oneSpotTxt;
+
+        private Text fourSpotTxt;
+
+        private Text eightSpotTxt;
+
+        private Text tenSpotTxt;
+
+        private EventHandler<ActionEvent> betHandler;
 
 		private EventHandler<ActionEvent> spotHandler;
 
@@ -96,15 +104,61 @@ public class JavaFXTemplate extends Application {
 				" Players win by matching a set amount of their\n numbers to" +
 				" the numbers that are randomly drawn.\n";
 
-		txt.setFont(Font.font(20));
-		txt.setText(kenoRules);
-		txt.setTextAlignment(TextAlignment.CENTER);
+		rulesTxt.setFont(Font.font(20));
+        rulesTxt.setText(kenoRules);
+        rulesTxt.setTextAlignment(TextAlignment.CENTER);
 
-		VBox verticalBox = new VBox(25,menu, txt);
-		rulesPane.setCenter(verticalBox);
+		rulesPane.setTop(menu);
+		rulesPane.setCenter(rulesTxt);
 
 		return new Scene(rulesPane, 1000,700);
 	}
+
+	public Scene createOddsScene()
+    {
+        BorderPane oddsPane = new BorderPane();
+
+        oddsPane.setStyle("-fx-background-color: #228B22;"); // Forest Green background
+        oddsPane.setBottom(returnButton);
+
+        // Still have to set the odds
+        String oneSpot   = "1 Spot Game\n" +
+                "Match          Prize  \n" +
+                "  1            $2     \n";
+
+        String fourSpot  = "4 Spot Game\n" +
+                "Match          Prize  \n" +
+                "  4            $75    \n" +
+                "  3            $5     \n" +
+                "  2            $1     \n";
+
+        String eightSpot = "8 Spot Game \n" +
+                "Match          Prize   \n" +
+                "  8            $10,000*\n" +
+                "  7            $750    \n" +
+                "  6            $50     \n" +
+                "  5            $12     \n" +
+                "  4            $2      \n";
+
+        String tenSpot   = "10 Spot Game  \n" +
+                "Match          Prize     \n" +
+                "  10           $100,000* \n" +
+                "  9            $4,250    \n" +
+                "  8            $450      \n" +
+                "  7            $40       \n" +
+                "  6            $15       \n" +
+                "  5            $2        \n" +
+                "  0            $5        \n" ;
+
+        oneSpotTxt.setText(oneSpot);
+        fourSpotTxt.setText(fourSpot);
+        eightSpotTxt.setText(eightSpot);
+        tenSpotTxt.setText(tenSpot);
+
+
+        oddsPane.setTop(menu);
+        return new Scene(oddsPane, 1000,700);
+    }
 
 //	public Scene createWinningsMenu(){
 //		BorderPane rulesPane = new BorderPane();
@@ -131,7 +185,13 @@ public class JavaFXTemplate extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Welcome to Keno");
 		returnButton = new Button("Return to Game");  //This is from the private variable in the class
-		txt = new Text();
+		rulesTxt = new Text();
+        oneSpotTxt = new Text();
+        fourSpotTxt = new Text();
+        eightSpotTxt = new Text();
+        tenSpotTxt = new Text();
+		betStrings = new ArrayList<>();
+		spotStrings = new ArrayList<>();
 		
 		/*//create an event handler if more than one widget needs same action
 		EventHandler<ActionEvent> myHandler = new EventHandler<ActionEvent>() {
@@ -161,19 +221,23 @@ public class JavaFXTemplate extends Application {
 		menu = new MenuBar(); //a menu bar takes menus as children
 		Menu optionMenu = new Menu("Menu");
 		MenuItem rulesMenu = new MenuItem("Rules of the Game"); //a menu goes inside a menu bar
-		MenuItem winningsMenu = new MenuItem("Odds of Winning");
+		MenuItem oddsWinningsMenu = new MenuItem("Odds of Winning");
 		MenuItem newLook = new MenuItem("New Look");
 		MenuItem exitGame = new MenuItem("Exit Game");
 		menu.getMenus().addAll(optionMenu);
 
 		/**Putting menu items into the menu (The drop down menu)**/
 		optionMenu.getItems().add(rulesMenu); //add menu item to first menu
-		optionMenu.getItems().add(winningsMenu);
+		optionMenu.getItems().add(oddsWinningsMenu);
 		optionMenu.getItems().add(newLook);
 		optionMenu.getItems().add(exitGame);
 
 		//Change the scene to the rules menu
 		rulesMenu.setOnAction(e->primaryStage.setScene(createRulesScene()));
+
+		//Change the scene to the odds menu
+		oddsWinningsMenu.setOnAction(e->primaryStage.setScene(createOddsScene()));
+
 		//Exit the Code
 		exitGame.setOnAction((e->exit()));
 
@@ -213,6 +277,8 @@ public class JavaFXTemplate extends Application {
 		/**Sets the game scene immediately (Temporary)**/
 		primaryStage.setScene(createGameScene()); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
+
+		
 	}
 
 	/**Completely change the entire board to Enabled/Disabled**/
@@ -268,14 +334,7 @@ public class JavaFXTemplate extends Application {
 	// Return the string of the button that was pressed
 	public String spotNum()
 	{
-		for(int i = 0; i < spotStrings.size(); i++)
-		{
-			if(spotStrings.get(i) == "1" | spotStrings.get(i) == "4"|
-					spotStrings.get(i) == "8" | spotStrings.get(i) == "10")
-			{
-				return spotStrings.get(i);
-			}
-		}
+
 
 		return "";
 	}
