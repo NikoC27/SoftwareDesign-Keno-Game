@@ -155,8 +155,10 @@ public class JavaFXTemplate extends Application {
         eightSpotTxt.setText(eightSpot);
         tenSpotTxt.setText(tenSpot);
 
+        //Puts all the text and menu into the Vbox and put them into the scene
+        VBox oddsMenu = new VBox(25, menu, oneSpotTxt, fourSpotTxt, eightSpotTxt, tenSpotTxt);
+        oddsPane.setCenter(oddsMenu);
 
-        oddsPane.setTop(menu);
         return new Scene(oddsPane, 1000,700);
     }
 
