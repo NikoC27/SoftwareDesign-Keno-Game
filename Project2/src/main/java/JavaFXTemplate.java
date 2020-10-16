@@ -130,41 +130,60 @@ public class JavaFXTemplate extends Application {
 
         // Still have to set the odds
         String oneSpot   = "1 Spot Game\n" +
-                "Match          Prize  \n" +
-                "  1            $2     \n";
+                "Match		Prize  \n" +
+                "  1                   $2     \n" +
+				"Overall odds: 1 in 4.00\n";
 
         String fourSpot  = "4 Spot Game\n" +
-                "Match          Prize  \n" +
-                "  4            $75    \n" +
-                "  3            $5     \n" +
-                "  2            $1     \n";
+                "Match		Prize  \n" +
+                "  4                   $75    \n" +
+                "  3                   $5     \n" +
+                "  2                   $1     \n" +
+				"Overall odds: 1 in 3.86\n";
 
         String eightSpot = "8 Spot Game \n" +
-                "Match          Prize   \n" +
-                "  8            $10,000*\n" +
-                "  7            $750    \n" +
-                "  6            $50     \n" +
-                "  5            $12     \n" +
-                "  4            $2      \n";
+                "Match		Prize   \n" +
+                "  8                    $10,000*\n" +
+                " 7                     $750    \n" +
+                "6                     $50     \n" +
+                "5                     $12     \n" +
+                "4                     $2      \n" +
+				"Overall odds: 1 in 9.77\n";
 
-        String tenSpot   = "10 Spot Game  \n" +
-                "Match          Prize     \n" +
-                "  10           $100,000* \n" +
-                "  9            $4,250    \n" +
-                "  8            $450      \n" +
-                "  7            $40       \n" +
-                "  6            $15       \n" +
-                "  5            $2        \n" +
-                "  0            $5        \n" ;
+        String tenSpot = "10 Spot Game  \n" +
+                "Match		Prize     \n" +
+                "   10		    $100,000* \n" +
+                "  9		   $4,250    \n" +
+                "  8                $450      \n" +
+                "  7                $40       \n" +
+                "  6                $15       \n" +
+                "  5                $2        \n" +
+                "  0                $5        \n" +
+				"Overall odds: 1 in 9.05\n";;
 
         oneSpotTxt.setText(oneSpot);
-        fourSpotTxt.setText(fourSpot);
-        eightSpotTxt.setText(eightSpot);
-        tenSpotTxt.setText(tenSpot);
+        oneSpotTxt.setTextAlignment(TextAlignment.CENTER);
+		oneSpotTxt.setFont(Font.font(20.0));
 
-        //Puts all the text and menu into the Vbox and put them into the scene
-        VBox oddsMenu = new VBox(25, menu, oneSpotTxt, fourSpotTxt, eightSpotTxt, tenSpotTxt);
+        fourSpotTxt.setText(fourSpot);
+		fourSpotTxt.setTextAlignment(TextAlignment.CENTER);
+		fourSpotTxt.setFont(Font.font(20.0));
+
+        eightSpotTxt.setText(eightSpot);
+		eightSpotTxt.setTextAlignment(TextAlignment.CENTER);
+		eightSpotTxt.setFont(Font.font(20.0));
+
+        tenSpotTxt.setText(tenSpot);
+		tenSpotTxt.setTextAlignment(TextAlignment.CENTER);
+		tenSpotTxt.setFont(Font.font(20.0));
+
+        //Puts all the text into the HBox and put them into the scene
+        HBox oddsMenu = new HBox(30, oneSpotTxt, fourSpotTxt, eightSpotTxt, tenSpotTxt);
+        oddsMenu.setAlignment(Pos.TOP_CENTER);
         oddsPane.setCenter(oddsMenu);
+		//oddsPane.setAlignment(oddsMenu, Pos.CENTER);
+        oddsPane.setTop(menu);
+
 
         return new Scene(oddsPane, 1000,700);
     }
