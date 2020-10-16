@@ -5,11 +5,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -44,6 +40,7 @@ public class JavaFXTemplate extends Application {
         private EventHandler<ActionEvent> betHandler;
 		private EventHandler<ActionEvent> spotHandler;
 		private EventHandler<ActionEvent> gambleHandler;
+		private EventHandler<ActionEvent> drawingHandler;
 
 		private PauseTransition pause = new PauseTransition(Duration.seconds(3));
 
@@ -66,8 +63,14 @@ public class JavaFXTemplate extends Application {
 	public Scene createGameScene() {
 		BorderPane pane = new BorderPane();
 		Button confirmation = new Button("Gamble!");
+		ComboBox<String> cb = new ComboBox<>();
+		cb.setPromptText("Draw a number"); // ComboBox
+		cb.getItems().addAll("1", "2", "3", "4");
+		Text spotText = new Text("Pick a Spot!");
+		spotText.setFont(Font.font(15.0));
 		pane.setStyle("-fx-background-color: maroon;");
 
+		cb.setOnAction(drawingHandler);
 		confirmation.setOnAction(gambleHandler);
 
 		/**This is the game grid initialization for spot and grid**/
@@ -76,13 +79,14 @@ public class JavaFXTemplate extends Application {
 		grid.setAlignment(Pos.CENTER);
 		spotGrid.setAlignment((Pos.CENTER));
 
-		HBox horizontalB = new HBox(25, confirmation);
+		HBox horizontalB = new HBox(25, cb, confirmation);
 		horizontalB.setAlignment(Pos.CENTER);
 
 		//Creating the vertical box
-		VBox verticalB = new VBox(25, menu, spotGrid, horizontalB);
+		VBox verticalB = new VBox(25, menu, spotText, spotGrid, horizontalB);
 		verticalB.getChildren().addAll(grid);
 		pane.setCenter(verticalB);
+
 
 		/**Adds the button into the grid**/
 		addBetCard(grid);
@@ -290,6 +294,12 @@ public class JavaFXTemplate extends Application {
 				if(buttonsPress > 0){
 					toggleGrid(grid, false);
 				}
+			}
+		};
+
+		drawingHandler = new EventHandler<ActionEvent>(){
+			public void handle(ActionEvent e){
+
 			}
 		};
 		/*********************************************************************************************************/
