@@ -13,6 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -31,19 +32,15 @@ public class JavaFXTemplate extends Application {
 
 		private Button returnButton;
 		
-		private TextField t1;
-		
 		private MenuBar menu;
 
+		/**Text Variables**/
 		private Text rulesTxt;
-
         private Text oneSpotTxt;
-
         private Text fourSpotTxt;
-
         private Text eightSpotTxt;
-
         private Text tenSpotTxt;
+		/******************/
 
         private EventHandler<ActionEvent> betHandler;
 
@@ -66,6 +63,7 @@ public class JavaFXTemplate extends Application {
 	/**Create the Scene for the Game**/
 	public Scene createGameScene() {
 		BorderPane pane = new BorderPane();
+		Button confirmation = new Button("Gamble!");
 		pane.setStyle("-fx-background-color: maroon;");
 
 		/**This is the game grid initialization for spot and grid**/
@@ -74,11 +72,15 @@ public class JavaFXTemplate extends Application {
 		grid.setAlignment(Pos.CENTER);
 		spotGrid.setAlignment((Pos.CENTER));
 
+		HBox horizontalB = new HBox(25, confirmation);
+		horizontalB.setAlignment(Pos.CENTER);
+
 		//Creating the vertical box
-		VBox verticalB = new VBox(25,menu,spotGrid);
+		VBox verticalB = new VBox(25, menu, spotGrid, horizontalB);
 		verticalB.getChildren().addAll(grid);
 		toggleGrid(grid, true);
 		pane.setCenter(verticalB);
+
 
 		/**Adds the button into the grid**/
 		addBetCard(grid);
@@ -162,13 +164,6 @@ public class JavaFXTemplate extends Application {
         return new Scene(oddsPane, 1000,700);
     }
 
-//	public Scene createWinningsMenu(){
-//		BorderPane rulesPane = new BorderPane();
-//		rulesPane.setStyle("-fx-background-color: maroon;");
-//
-//		return new Scene();
-//	}
-
 //	public Scene createNewLook(){
 //		BorderPane looksPane = new BorderPane();
 //		String stringArr[] = {"maroon;", "lightblue;", "black;", "white;"};
@@ -243,7 +238,6 @@ public class JavaFXTemplate extends Application {
 		//Exit the Code
 		exitGame.setOnAction((e->exit()));
 
-//		winningsMenu.setOnAction(e->primaryStage.setScene();
 		primaryStage.show();
 		/*********************************************************************************************************/
 
@@ -259,18 +253,15 @@ public class JavaFXTemplate extends Application {
 			}
 		};
 
-
 		spotHandler = new EventHandler<ActionEvent>(){
 			public void handle(ActionEvent e) {
+				spotStrings.clear();
 				Button b1 =(Button)e.getSource();
 				String buttonNum = ((Button)e.getSource()).getText();
-				//System.out.println(buttonNum);
 				spotStrings.add(buttonNum);
-				//System.out.println(spotStrings.size());
 				b1.setDisable(true);
 			}
 		};
-
 		/*********************************************************************************************************/
 
 		/**This makes the return button go to the game scene(Temporary)**/
