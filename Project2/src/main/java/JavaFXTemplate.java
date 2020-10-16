@@ -2,7 +2,6 @@ import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -43,19 +42,17 @@ public class JavaFXTemplate extends Application {
 		/******************/
 
         private EventHandler<ActionEvent> betHandler;
-
 		private EventHandler<ActionEvent> spotHandler;
-
 		private EventHandler<ActionEvent> gambleHandler;
 
 		private PauseTransition pause = new PauseTransition(Duration.seconds(3));
 
 		private ArrayList<String> betStrings;
-
 		private ArrayList<String> spotStrings;
 
 		private GridPane grid;
 		private GridPane spotGrid;
+		private int buttonsPress;
 
 
 
@@ -130,8 +127,8 @@ public class JavaFXTemplate extends Application {
 
         // Still have to set the odds
         String oneSpot   = "1 Spot Game\n" +
-                "Match		Prize  \n" +
-                "  1                   $2     \n" +
+                "Match		Prize\n" +
+                "  1                       $2     \n" +
 				"Overall odds: 1 in 4.00\n";
 
         String fourSpot  = "4 Spot Game\n" +
@@ -233,9 +230,7 @@ public class JavaFXTemplate extends Application {
 			}
 		});
 		*/
-		
-		//use a lambda expression to attach the event handler to a button
-//		b1.setOnAction(e->t1.setText("I love this syntax!!!!"));
+
 		/** Menu Option Code **/
 		/*********************************************************************************************************/
 		//Creates all the menu and the drop down items
@@ -269,11 +264,14 @@ public class JavaFXTemplate extends Application {
 		/*********************************************************************************************************/
 		betHandler = new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				//System.out.println("button pressed: " + ((Button)e.getSource()).getText());
 				Button b1 = (Button)e.getSource();
 				String buttonNum = ((Button)e.getSource()).getText();
-				b1.setDisable(true);
-				betStrings.add(buttonNum);
+				if(buttonsPress != 0){
+					b1.setDisable(true);
+					betStrings.add(buttonNum);
+					buttonsPress--;
+				}
+
 			}
 		};
 
@@ -282,16 +280,14 @@ public class JavaFXTemplate extends Application {
 				spotStrings.clear();
 				Button b1 =(Button)e.getSource();
 				String buttonNum = ((Button)e.getSource()).getText();
-				spotStrings.add(buttonNum);
-				b1.setDisable(true);
+				buttonsPress = Integer.parseInt(buttonNum.trim());  //String to Int
+				toggleGrid(spotGrid, true);
 			}
 		};
 
 		gambleHandler = new EventHandler<ActionEvent>(){
 			public void handle(ActionEvent e) {
-				Button b1 =(Button)e.getSource();
-				System.out.println(spotStrings);
-				if(spotStrings.size() > 0){
+				if(buttonsPress > 0){
 					toggleGrid(grid, false);
 				}
 			}
@@ -304,10 +300,6 @@ public class JavaFXTemplate extends Application {
 		/**Sets the game scene immediately (Temporary)**/
 		primaryStage.setScene(createGameScene()); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
-
-
-
-		
 	}
 
 	/**Completely change the entire board to Enabled/Disabled**/
@@ -351,20 +343,5 @@ public class JavaFXTemplate extends Application {
 			spots.setOnAction(spotHandler);
 			grid.add(spots,i,0);
 		}
-	}
-
-
-	public void odds(Text txt)
-	{
-
-	}
-
-
-	// Return the string of the button that was pressed
-	public String spotNum()
-	{
-
-
-		return "";
 	}
 }
