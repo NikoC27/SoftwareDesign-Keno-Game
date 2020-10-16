@@ -46,11 +46,16 @@ public class JavaFXTemplate extends Application {
 
 		private EventHandler<ActionEvent> spotHandler;
 
+		private EventHandler<ActionEvent> gambleHandler;
+
 		private PauseTransition pause = new PauseTransition(Duration.seconds(3));
 
 		private ArrayList<String> betStrings;
 
 		private ArrayList<String> spotStrings;
+
+		private GridPane grid;
+		private GridPane spotGrid;
 
 
 
@@ -66,9 +71,11 @@ public class JavaFXTemplate extends Application {
 		Button confirmation = new Button("Gamble!");
 		pane.setStyle("-fx-background-color: maroon;");
 
+		confirmation.setOnAction(gambleHandler);
+
 		/**This is the game grid initialization for spot and grid**/
-		GridPane grid = new GridPane();
-		GridPane spotGrid = new GridPane();
+		grid = new GridPane();
+		spotGrid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		spotGrid.setAlignment((Pos.CENTER));
 
@@ -78,9 +85,7 @@ public class JavaFXTemplate extends Application {
 		//Creating the vertical box
 		VBox verticalB = new VBox(25, menu, spotGrid, horizontalB);
 		verticalB.getChildren().addAll(grid);
-		toggleGrid(grid, true);
 		pane.setCenter(verticalB);
-
 
 		/**Adds the button into the grid**/
 		addBetCard(grid);
@@ -262,6 +267,16 @@ public class JavaFXTemplate extends Application {
 				b1.setDisable(true);
 			}
 		};
+
+		gambleHandler = new EventHandler<ActionEvent>(){
+			public void handle(ActionEvent e) {
+				Button b1 =(Button)e.getSource();
+				System.out.println(spotStrings);
+				if(spotStrings.size() > 0){
+					toggleGrid(grid, false);
+				}
+			}
+		};
 		/*********************************************************************************************************/
 
 		/**This makes the return button go to the game scene(Temporary)**/
@@ -270,6 +285,8 @@ public class JavaFXTemplate extends Application {
 		/**Sets the game scene immediately (Temporary)**/
 		primaryStage.setScene(createGameScene()); //set the scene in the stage
 		primaryStage.show(); //make visible to the user
+
+
 
 		
 	}
