@@ -1,11 +1,16 @@
-import javafx.animation.PauseTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -16,77 +21,118 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.security.Key;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
-
 import static javafx.application.Platform.exit;
-
 
 public class JavaFXTemplate extends Application {
 
-		private Button returnButton;
-		
-		private MenuBar menu;
+	private int colorPreset = 0;
 
-		/**Text Variables**/
-		private Text rulesTxt;
-        private Text oneSpotTxt;
-        private Text fourSpotTxt;
-        private Text eightSpotTxt;
-        private Text tenSpotTxt;
-		/******************/
+	/**Grid Color Schemes**/
+	private final String[] defaults = {"-fx-text-fill: black; -fx-background-color:white; -fx-border-color: black;", "-fx-text-fill: darkblue; -fx-background-color:violet; -fx-border-color: red; "};
+	private final String[] selected = {"-fx-text-fill: red;   -fx-background-color:black; -fx-border-color: white;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
+	private final String[] computer = {"-fx-text-fill: blue;  -fx-background-color:white; -fx-border-color: blue;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
+	private final String[] winnings = {"-fx-text-fill: gold;  -fx-background-color:black; -fx-border-color: gold;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue;"};
+	private String buttonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 50; -fx-pref-height: 50";
+	private String medButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 150; -fx-pref-height: 50";
+	private String largeButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 500; -fx-pref-height: 50";
 
-        private EventHandler<ActionEvent> betHandler;
-		private EventHandler<ActionEvent> spotHandler;
-		private EventHandler<ActionEvent> gambleHandler;
-		private EventHandler<ActionEvent> drawingHandler;
+	//Booleans which stage of the game
+	private boolean gameStarted;
+	private boolean gamblePressed;
+	private boolean spotSelected;
 
-		private PauseTransition pause = new PauseTransition(Duration.seconds(3));
+	//Important Buttons
+	private Button returnButton;
+	private Button gambleButton;
+	private Button resetButton;
+	private Button startButton;
+	private Button scoreButton;
+	private Button randomButton;
 
-		private ArrayList<String> betStrings;
-		private ArrayList<String> spotStrings;
+	//Menu
+	public MenuBar menu;
 
-		private GridPane grid;
-		private GridPane spotGrid;
-		private int buttonsPress;
+	/**Text Variables**/
+	private Text rulesTxt;
+	private Text oneSpotTxt;
+	private Text fourSpotTxt;
+	private Text eightSpotTxt;
+	private Text tenSpotTxt;
+	/******************/
 
+	//All Event Handlers
+	private EventHandler<ActionEvent> betHandler;
+	private EventHandler<ActionEvent> spotHandler;
+	private EventHandler<ActionEvent> gambleHandler;
+	private EventHandler<ActionEvent> resetHandler;
+	private EventHandler<ActionEvent> startHandler;
+	private EventHandler<ActionEvent> scoreHandler;
+	private EventHandler<ActionEvent> randomHandler;
+	private EventHandler<ActionEvent> themeHandler;
 
+	//Array list
+	private ArrayList<String> betStrings;
+	private ArrayList<Integer> drawingsSelected;
+	private ArrayList<Integer> randomSelected;
 
+	//The two Grids
+	private GridPane grid;
+	private GridPane spotGrid;
+
+	private int buttonsPress;
+	private int matchingPress;
+
+	private Random randomNums;
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		launch(args);
 	}
 
 	/**Create the Scene for the Game**/
 	public Scene createGameScene() {
 		BorderPane pane = new BorderPane();
-		Button confirmation = new Button("Gamble!");
-		ComboBox<String> cb = new ComboBox<>();
-		cb.setPromptText("Draw a number"); // ComboBox
-		cb.getItems().addAll("1", "2", "3", "4");
-		Text spotText = new Text("Pick a Spot!");
-		spotText.setFont(Font.font(15.0));
+
+		gambleButton = new Button("Gamble!");
+		gambleButton.setStyle(selected[colorPreset] + medButtonSize);
+		gambleButton.setOnAction(gambleHandler);
+
+		resetButton = new Button("Reset Game");
+		resetButton.setStyle(selected[colorPreset] + medButtonSize);
+		resetButton.setOnAction(resetHandler);
+
+		startButton = new Button("Start");
+		startButton.setStyle(selected[colorPreset] + medButtonSize);
+		startButton.setOnAction(startHandler);
+
+		scoreButton = new Button("Click to Reveal Score!");
+		scoreButton.setStyle(winnings[colorPreset] + largeButtonSize);
+		scoreButton.setOnAction(scoreHandler);
+
+		randomButton= new Button("Select Random");
+		randomButton.setStyle(selected[colorPreset] + medButtonSize);
+		randomButton.setOnAction(randomHandler);
+
 		pane.setStyle("-fx-background-color: maroon;");
-
-		cb.setOnAction(drawingHandler);
-		confirmation.setOnAction(gambleHandler);
-
 		/**This is the game grid initialization for spot and grid**/
 		grid = new GridPane();
 		spotGrid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		spotGrid.setAlignment((Pos.CENTER));
 
-		HBox horizontalB = new HBox(25, cb, confirmation);
-		horizontalB.setAlignment(Pos.CENTER);
+		HBox gambleHB = new HBox(25, gambleButton);
+		gambleHB.setAlignment(Pos.CENTER);
 
 		//Creating the vertical box
-		VBox verticalB = new VBox(25, menu, spotText, spotGrid, horizontalB);
-		verticalB.getChildren().addAll(grid);
+		VBox verticalB = new VBox(25, menu, spotGrid, gambleHB);
+		HBox settingsHB = new HBox(25, startButton, randomButton, resetButton);
+		HBox scoreHB = new HBox(25, scoreButton);
+		scoreHB.setAlignment(Pos.CENTER);
+		settingsHB.setAlignment((Pos.CENTER));
+		verticalB.getChildren().addAll(grid, settingsHB, scoreHB);
 		pane.setCenter(verticalB);
-
 
 		/**Adds the button into the grid**/
 		addBetCard(grid);
@@ -113,8 +159,8 @@ public class JavaFXTemplate extends Application {
 				" the numbers that are randomly drawn.\n";
 
 		rulesTxt.setFont(Font.font(20));
-        rulesTxt.setText(kenoRules);
-        rulesTxt.setTextAlignment(TextAlignment.CENTER);
+		rulesTxt.setText(kenoRules);
+		rulesTxt.setTextAlignment(TextAlignment.CENTER);
 
 		rulesPane.setTop(menu);
 		rulesPane.setCenter(rulesTxt);
@@ -123,84 +169,57 @@ public class JavaFXTemplate extends Application {
 	}
 
 	public Scene createOddsScene()
-    {
-        BorderPane oddsPane = new BorderPane();
+	{
+		BorderPane oddsPane = new BorderPane();
 
-        oddsPane.setStyle("-fx-background-color: #228B22;"); // Forest Green background
-        oddsPane.setBottom(returnButton);
+		oddsPane.setStyle("-fx-background-color: #228B22;"); // Forest Green background
+		oddsPane.setBottom(returnButton);
 
-        // Still have to set the odds
-        String oneSpot   = "1 Spot Game\n" +
-                "Match		Prize\n" +
-                "  1                       $2     \n" +
+		// Still have to set the odds
+		String oneSpot   = "1 Spot Game\n" +
+				"Match		Prize\n" +
+				"  1                       $2     \n" +
 				"Overall odds: 1 in 4.00\n";
 
-        String fourSpot  = "4 Spot Game\n" +
-                "Match		Prize  \n" +
-                "  4                   $75    \n" +
-                "  3                   $5     \n" +
-                "  2                   $1     \n" +
+		String fourSpot  = "4 Spot Game\n" +
+				"Match		Prize  \n" +
+				"  4                   $75    \n" +
+				"  3                   $5     \n" +
+				"  2                   $1     \n" +
 				"Overall odds: 1 in 3.86\n";
 
-        String eightSpot = "8 Spot Game \n" +
-                "Match		Prize   \n" +
-                "  8                    $10,000*\n" +
-                " 7                     $750    \n" +
-                "6                     $50     \n" +
-                "5                     $12     \n" +
-                "4                     $2      \n" +
+		String eightSpot = "8 Spot Game \n" +
+				"Match		Prize   \n" +
+				"  8                    $10,000*\n" +
+				" 7                     $750    \n" +
+				"6                     $50     \n" +
+				"5                     $12     \n" +
+				"4                     $2      \n" +
 				"Overall odds: 1 in 9.77\n";
 
-        String tenSpot = "10 Spot Game  \n" +
-                "Match		Prize     \n" +
-                "   10		    $100,000* \n" +
-                "  9		   $4,250    \n" +
-                "  8                $450      \n" +
-                "  7                $40       \n" +
-                "  6                $15       \n" +
-                "  5                $2        \n" +
-                "  0                $5        \n" +
-				"Overall odds: 1 in 9.05\n";;
+		String tenSpot = "10 Spot Game  \n" +
+				"Match		Prize     \n" +
+				"   10		    $100,000* \n" +
+				"  9		   $4,250    \n" +
+				"  8                $450      \n" +
+				"  7                $40       \n" +
+				"  6                $15       \n" +
+				"  5                $2        \n" +
+				"  0                $5        \n" +
+				"Overall odds: 1 in 9.05\n";
 
-        oneSpotTxt.setText(oneSpot);
-        oneSpotTxt.setTextAlignment(TextAlignment.CENTER);
-		oneSpotTxt.setFont(Font.font(20.0));
+		textSettings(oneSpotTxt, oneSpot);
+		textSettings(fourSpotTxt, fourSpot);
+		textSettings(eightSpotTxt, eightSpot);
+		textSettings(tenSpotTxt, tenSpot);
 
-        fourSpotTxt.setText(fourSpot);
-		fourSpotTxt.setTextAlignment(TextAlignment.CENTER);
-		fourSpotTxt.setFont(Font.font(20.0));
-
-        eightSpotTxt.setText(eightSpot);
-		eightSpotTxt.setTextAlignment(TextAlignment.CENTER);
-		eightSpotTxt.setFont(Font.font(20.0));
-
-        tenSpotTxt.setText(tenSpot);
-		tenSpotTxt.setTextAlignment(TextAlignment.CENTER);
-		tenSpotTxt.setFont(Font.font(20.0));
-
-        //Puts all the text into the HBox and put them into the scene
-        HBox oddsMenu = new HBox(30, oneSpotTxt, fourSpotTxt, eightSpotTxt, tenSpotTxt);
-        oddsMenu.setAlignment(Pos.TOP_CENTER);
-        oddsPane.setCenter(oddsMenu);
-		//oddsPane.setAlignment(oddsMenu, Pos.CENTER);
-        oddsPane.setTop(menu);
-
-
-        return new Scene(oddsPane, 1000,700);
-    }
-
-//	public Scene createNewLook(){
-//		BorderPane looksPane = new BorderPane();
-//		String stringArr[] = {"maroon;", "lightblue;", "black;", "white;"};
-//
-//		Random rand = null;
-//		looksPane.setStyle("-fx-background-color: "+ stringArr[rand.nextInt(3)]);
-//
-//
-//		return new Scene(looksPane, 1000, 700);
-//	}
-
-
+		//Puts all the text into the HBox and put them into the scene
+		HBox oddsMenu = new HBox(30, oneSpotTxt, fourSpotTxt, eightSpotTxt, tenSpotTxt);
+		oddsMenu.setAlignment(Pos.TOP_CENTER);
+		oddsPane.setCenter(oddsMenu);
+		oddsPane.setTop(menu);
+		return new Scene(oddsPane, 1000,700);
+	}
 
 	//feel free to remove the starter code from this method
 	@Override
@@ -208,32 +227,11 @@ public class JavaFXTemplate extends Application {
 		primaryStage.setTitle("Welcome to Keno");
 		returnButton = new Button("Return to Game");  //This is from the private variable in the class
 		rulesTxt = new Text();
-        oneSpotTxt = new Text();
-        fourSpotTxt = new Text();
-        eightSpotTxt = new Text();
-        tenSpotTxt = new Text();
+		oneSpotTxt = new Text();
+		fourSpotTxt = new Text();
+		eightSpotTxt = new Text();
+		tenSpotTxt = new Text();
 		betStrings = new ArrayList<>();
-		spotStrings = new ArrayList<>();
-		
-		/*//create an event handler if more than one widget needs same action
-		EventHandler<ActionEvent> myHandler = new EventHandler<ActionEvent>() {
-			
-			public void handle(ActionEvent e) {
-				t1.setText("button was pressed!");
-			}
-		};
-		
-		//attach the event handler to the button
-		b1.setOnAction(myHandler);
-		*/
-		
-		/*//use an anonymous class to attach the event handler to the button
-		b1.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent a) {
-				t1.setText("button was pressed!");
-			}
-		});
-		*/
 
 		/** Menu Option Code **/
 		/*********************************************************************************************************/
@@ -258,6 +256,50 @@ public class JavaFXTemplate extends Application {
 		//Change the scene to the odds menu
 		oddsWinningsMenu.setOnAction(e->primaryStage.setScene(createOddsScene()));
 
+		//Change the theme colors
+		newLook.setOnAction(event -> {
+			randomNums = new Random();
+			int oldPreset = colorPreset;
+
+			while(colorPreset == oldPreset){
+				colorPreset = randomNums.nextInt(2);
+			}
+
+			returnButton.setStyle(selected[colorPreset] + medButtonSize);
+
+			if(gambleButton.getStyle().equals(selected[oldPreset] + largeButtonSize)){
+				gambleButton.setStyle(selected[colorPreset] + largeButtonSize);
+			}
+			else{
+				gambleButton.setStyle(selected[colorPreset] + medButtonSize);
+			}
+
+			resetButton.setStyle(selected[colorPreset] + medButtonSize);
+			startButton.setStyle(selected[colorPreset] + medButtonSize);
+			scoreButton.setStyle(winnings[colorPreset] + largeButtonSize);
+			randomButton.setStyle(selected[colorPreset] + medButtonSize);
+
+			for(Node child: spotGrid.getChildren()){
+				child.setStyle(defaults[colorPreset] + buttonSize);
+			}
+
+			for(Node child: grid.getChildren()){
+				if(child.getStyle().equals(defaults[oldPreset] + buttonSize)){
+					child.setStyle(defaults[colorPreset] + buttonSize);
+				}
+				if(child.getStyle().equals(selected[oldPreset] + buttonSize)){
+					child.setStyle(selected[colorPreset] + buttonSize);
+				}
+				if(child.getStyle().equals(computer[oldPreset] + buttonSize)){
+					child.setStyle(computer[colorPreset] + buttonSize);
+				}
+				if(child.getStyle().equals(winnings[oldPreset] + buttonSize)){
+					child.setStyle(winnings[colorPreset] + buttonSize);
+				}
+			}
+		}
+		);
+
 		//Exit the Code
 		exitGame.setOnAction((e->exit()));
 
@@ -266,42 +308,140 @@ public class JavaFXTemplate extends Application {
 
 		/** EVENTHANDLERS **/
 		/*********************************************************************************************************/
-		betHandler = new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e) {
+		betHandler = e -> {
+			Button b1 = (Button)e.getSource();
+			String buttonNum = ((Button)e.getSource()).getText();
+
+			/**Check if the style is the pressed button for undoing a press**/
+			if(b1.getStyle().equals(selected[colorPreset]+ buttonSize)){
+				b1.setStyle(defaults[colorPreset] + buttonSize);
+				betStrings.remove(buttonNum);
+				buttonsPress++;
+
+			}
+			/**Check how many presses are available to make sure they don't press more spot than allowed**/
+			else if(buttonsPress != 0){
+				b1.setStyle(selected[colorPreset] + buttonSize);
+				betStrings.add(buttonNum);
+				buttonsPress--;
+			}
+
+			/**Display the spots left as the player presses**/
+			gambleButton.setText("Number of Spots: " + buttonsPress);
+		};
+
+		spotHandler = e -> {
+			String buttonNum = ((Button)e.getSource()).getText();
+			buttonsPress = Integer.parseInt(buttonNum.trim());  //String to Int
+			spotSelected = true;
+			toggleGrid(spotGrid, true);
+		};
+
+		gambleHandler = e -> {
+			if(buttonsPress > 0){
+				toggleGrid(grid, false);
 				Button b1 = (Button)e.getSource();
-				String buttonNum = ((Button)e.getSource()).getText();
-				if(buttonsPress != 0){
-					b1.setDisable(true);
-					betStrings.add(buttonNum);
+				b1.setStyle(selected[colorPreset] + largeButtonSize);
+				b1.setText("Number of Spots: " + buttonsPress);
+				gamblePressed = true;
+			}
+		};
+
+		//Resets all values
+		resetHandler = e -> {
+
+			//Resets both Grids
+			toggleGrid(spotGrid, false);
+			toggleGrid(grid, true);
+			resetGameGrid(grid);
+
+			//Reset and re-enabling the buttons
+			gambleButton.setText("Gamble!");
+			gambleButton.setStyle(selected[colorPreset] + medButtonSize);
+			startButton.setDisable(false);
+			scoreButton.setText("Click to Reveal Score!");
+			gameStarted = false;
+			gamblePressed = false;
+			spotSelected = false;
+			buttonsPress = 0;
+			matchingPress = 0;
+		};
+
+		/**The Handler for the Start button**/
+		startHandler = e -> {
+			drawingsSelected = new ArrayList<>();
+			Button b1 = (Button)e.getSource();
+			int temp;
+
+			/**Check If the user pressed the necessary things**/
+			if(!gamblePressed || buttonsPress != 0 || !spotSelected){
+				return;
+			}
+
+			gameStarted = true;
+			b1.setDisable(true);
+			randomNums = new Random();
+
+			/**Continues to add numbers to the array list until there are 20 with no dups**/
+			while(drawingsSelected.size() < 20){
+				temp = randomNums.nextInt(80) + 1;
+				if(!drawingsSelected.contains(temp)){
+					drawingsSelected.add(temp);
+				}
+			}
+
+			/**Goes through the entire grid and change the colors selected by computer**/
+			for(Node child: grid.getChildren()){
+				final Button button = (Button) child;
+				if(drawingsSelected.contains(Integer.parseInt(button.getText().trim()))){
+					//If the computer chose the button and player did not select
+					if(child.getStyle().equals(defaults[colorPreset] + buttonSize)){
+						child.setStyle(computer[colorPreset]+ buttonSize);
+					}
+					//If the computer chose the button and player selected
+					if(child.getStyle().equals(selected[colorPreset] + buttonSize)){
+						child.setStyle(winnings[colorPreset] + buttonSize);
+						matchingPress++;
+					}
+				}
+			}
+		};
+
+		/**Handler for the Score Button**/
+		scoreHandler = e->{
+			Button b1 = (Button)e.getSource();
+			if(gameStarted && spotSelected && gamblePressed && (buttonsPress == 0)) {
+				b1.setText("Matching Score: " + matchingPress);
+			}
+		};
+
+		/**Handler for the random button**/
+		randomHandler = e->{
+			randomNums = new Random();
+			randomSelected = new ArrayList<>();
+			if(!(buttonsPress > 0) || !gamblePressed || !spotSelected){
+				return;
+			}
+
+			//Get button press for the user
+			while(buttonsPress > 0){
+				int temp = randomNums.nextInt(80) + 1;
+				if(!randomSelected.contains(temp)){
+					randomSelected.add(temp);
 					buttonsPress--;
 				}
-
 			}
-		};
 
-		spotHandler = new EventHandler<ActionEvent>(){
-			public void handle(ActionEvent e) {
-				spotStrings.clear();
-				Button b1 =(Button)e.getSource();
-				String buttonNum = ((Button)e.getSource()).getText();
-				buttonsPress = Integer.parseInt(buttonNum.trim());  //String to Int
-				toggleGrid(spotGrid, true);
-			}
-		};
-
-		gambleHandler = new EventHandler<ActionEvent>(){
-			public void handle(ActionEvent e) {
-				if(buttonsPress > 0){
-					toggleGrid(grid, false);
+			//Show the button pressed the computer chose
+			for(Node child: grid.getChildren()){
+				final Button button = (Button) child;
+				if(randomSelected.contains(Integer.parseInt(button.getText().trim()))){
+					child.setStyle(selected[colorPreset] + buttonSize);
+					gambleButton.setText("Number of Spots: " + buttonsPress);
 				}
 			}
 		};
 
-		drawingHandler = new EventHandler<ActionEvent>(){
-			public void handle(ActionEvent e){
-
-			}
-		};
 		/*********************************************************************************************************/
 
 		/**This makes the return button go to the game scene(Temporary)**/
@@ -319,17 +459,23 @@ public class JavaFXTemplate extends Application {
 		}
 	}
 
+	/**Completely reset the Game Grid**/
+	public void resetGameGrid(GridPane grid){
+		for(Node child: grid.getChildren()){
+			child.setStyle(defaults[colorPreset] + buttonSize);
+		}
+	}
+
 	/*
 	 * method to populate a GridPane with buttons and attach a handler to each button
 	 * Bet Card
 	 */
 	public void addBetCard(GridPane grid) {
-		
+
 		for(int x = 0; x<8; x++) {
 			for(int i = 0; i<10; i++) {
 				Button bets = new Button(Integer.toString(1+i+x*10));
-				bets.setMinHeight(40.0);
-				bets.setMinWidth(40.0);
+				bets.setStyle(defaults[colorPreset] + buttonSize);
 				bets.setOnAction(betHandler);
 				bets.setDisable(true);
 				grid.add(bets, i, x);
@@ -343,15 +489,22 @@ public class JavaFXTemplate extends Application {
 	 */
 	public void addSpots(GridPane grid)
 	{
-		int spotsArr[] = {1, 4, 8, 10};
+		int[] spotsArr = {1, 4, 8, 10};
 
 		for(int i = 0; i < 4; i++)
 		{
 			Button spots = new Button(Integer.toString(spotsArr[i]));
-			spots.setMinWidth(40.0);
-			spots.setMinHeight(40.0);
+			spots.setStyle(defaults[colorPreset] + buttonSize);
 			spots.setOnAction(spotHandler);
 			grid.add(spots,i,0);
 		}
 	}
+
+	//Function for creating the text of odds menu
+	public void textSettings(Text tempText, String stringText){
+		tempText.setText(stringText);
+		tempText.setTextAlignment(TextAlignment.CENTER);
+		tempText.setFont(Font.font(20.0));
+	}
+
 }
