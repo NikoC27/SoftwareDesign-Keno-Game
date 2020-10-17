@@ -122,15 +122,16 @@ public class JavaFXTemplate extends Application {
 		resetButton.setOnAction(resetHandler);
 
 		timeline = new Timeline(
-			new KeyFrame(Duration.millis(500), startHandler)
+			new KeyFrame(Duration.millis(200), startHandler)
 		);
 
 		timeline.setCycleCount(20);
 
 		startButton = new Button("Start");
 		startButton.setStyle(selected[colorPreset] + medButtonSize);
-		addToDrawingsSelected();
-		startButton.setOnAction(e->timeline.play());
+		startButton.setOnAction(e->{
+			addToDrawingsSelected(); timeline.play();
+		});
 
 		scoreButton = new Button("Click to Reveal Score!");
 		scoreButton.setStyle(winnings[colorPreset] + largeButtonSize);
@@ -375,6 +376,7 @@ public class JavaFXTemplate extends Application {
 		//Resets all values
 		resetHandler = e -> {
 
+
 			//Resets both Grids
 			toggleGrid(spotGrid, false);
 			toggleGrid(grid, true);
@@ -390,31 +392,27 @@ public class JavaFXTemplate extends Application {
 			spotSelected = false;
 			buttonsPress = 0;
 			matchingPress = 0;
+			iterator = 0;
 		};
 
 		/**The Handler for the Start button**/
 		startHandler = e -> {
 			//drawingsSelected = new ArrayList<>();
+			/**Check If the user pressed the necessary things**/
+			if(!gamblePressed || buttonsPress != 0 || !spotSelected){
+				return;
+			}
+
+			gameStarted = true;
 			if(e.getSource() instanceof Button)
 			{
 				Button b1 = (Button)e.getSource();
-
-				/**Check If the user pressed the necessary things**/
-				if(!gamblePressed || buttonsPress != 0 || !spotSelected){
-					return;
-				}
-
-				gameStarted = true;
 				b1.setDisable(true);
-
 			}
 
-//			//int temp;
+//			int temp;
+//			randomNums = new Random();
 //
-
-
-			//randomNums = new Random();
-
 //			/**Continues to add numbers to the array list until there are 20 with no dups**/
 //			while(drawingsSelected.size() < 20){
 //				temp = randomNums.nextInt(80) + 1;
