@@ -31,11 +31,10 @@ public class JavaFXTemplate extends Application {
 	private int colorPreset = 0;
 
 	/**Grid Color Schemes**/
-	private final String[] defaults = {"-fx-text-fill: black; -fx-background-color:white; -fx-border-color: black;", "-fx-text-fill: #377178; -fx-background-color:#8AE1EB; -fx-border-color: #377178; "};
-	private final String[] selected = {"-fx-text-fill: red;   -fx-background-color:black; -fx-border-color: white;", "-fx-text-fill: lightblue; -fx-background-color:#377178; -fx-border-color: #8AE1EB; "};
-	private final String[] computer = {"-fx-text-fill: blue;  -fx-background-color:white; -fx-border-color: blue;", "-fx-text-fill: #BDA0BC; -fx-background-color:#8AE1EB; -fx-border-color: #BDA0BC; "};
-	private final String[] winnings = {"-fx-text-fill: gold;  -fx-background-color:black; -fx-border-color: gold;", "-fx-text-fill: #4B296B; -fx-background-color:#8AE1EB; -fx-border-color: #4B296B;"};
-	private final String[] backgroundColors = {"maroon;", "#64C6ED;"};
+	private final String[] defaults = {"-fx-text-fill: black; -fx-background-color:white; -fx-border-color: black;", "-fx-text-fill: darkblue; -fx-background-color:violet; -fx-border-color: red; "};
+	private final String[] selected = {"-fx-text-fill: red;   -fx-background-color:black; -fx-border-color: white;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
+	private final String[] computer = {"-fx-text-fill: blue;  -fx-background-color:white; -fx-border-color: blue;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
+	private final String[] winnings = {"-fx-text-fill: gold;  -fx-background-color:black; -fx-border-color: gold;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue;"};
 	private String buttonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 50; -fx-pref-height: 50";
 	private String medButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 150; -fx-pref-height: 50";
 	private String largeButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 500; -fx-pref-height: 50";
@@ -72,10 +71,12 @@ public class JavaFXTemplate extends Application {
 	private EventHandler<ActionEvent> startHandler;
 	private EventHandler<ActionEvent> scoreHandler;
 	private EventHandler<ActionEvent> randomHandler;
+	private EventHandler<ActionEvent> themeHandler;
+
 
 	//Array list
 	private ArrayList<String> betStrings;
-	private ArrayList<Integer> drawingsSelected;
+	private ArrayList<Integer> drawingsSelected = new ArrayList<Integer>();
 	private ArrayList<Integer> randomSelected;
 
 	//The two Grids
@@ -84,19 +85,33 @@ public class JavaFXTemplate extends Application {
 
 	private int buttonsPress;
 	private int matchingPress;
+	private int iterator = 0;
 
 	private Random randomNums;
-
-	private BorderPane gameScene;
-	private BorderPane rulesScene;
+	private Timeline timeline;
 
 	public static void main(String[] args) {
 		launch(args);
 	}
 
+
+	public void addToDrawingsSelected()
+	{
+		int temp;
+		randomNums = new Random();
+
+		/**Continues to add numbers to the array list until there are 20 with no dups**/
+			while(drawingsSelected.size() < 20){
+				temp = randomNums.nextInt(80) + 1;
+				if(!drawingsSelected.contains(temp)){
+					drawingsSelected.add(temp);
+				}
+			}
+	}
+
 	/**Create the Scene for the Game**/
 	public Scene createGameScene() {
-		gameScene = new BorderPane();
+		BorderPane pane = new BorderPane();
 
 		gambleButton = new Button("Gamble!");
 		gambleButton.setStyle(selected[colorPreset] + medButtonSize);
@@ -106,9 +121,16 @@ public class JavaFXTemplate extends Application {
 		resetButton.setStyle(selected[colorPreset] + medButtonSize);
 		resetButton.setOnAction(resetHandler);
 
+		timeline = new Timeline(
+			new KeyFrame(Duration.millis(500), startHandler)
+		);
+
+		timeline.setCycleCount(20);
+
 		startButton = new Button("Start");
 		startButton.setStyle(selected[colorPreset] + medButtonSize);
-		startButton.setOnAction(startHandler);
+		addToDrawingsSelected();
+		startButton.setOnAction(e->timeline.play());
 
 		scoreButton = new Button("Click to Reveal Score!");
 		scoreButton.setStyle(winnings[colorPreset] + largeButtonSize);
@@ -118,7 +140,7 @@ public class JavaFXTemplate extends Application {
 		randomButton.setStyle(selected[colorPreset] + medButtonSize);
 		randomButton.setOnAction(randomHandler);
 
-		gameScene.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
+		pane.setStyle("-fx-background-color: maroon;");
 		/**This is the game grid initialization for spot and grid**/
 		grid = new GridPane();
 		spotGrid = new GridPane();
@@ -135,22 +157,22 @@ public class JavaFXTemplate extends Application {
 		scoreHB.setAlignment(Pos.CENTER);
 		settingsHB.setAlignment((Pos.CENTER));
 		verticalB.getChildren().addAll(grid, settingsHB, scoreHB);
-		gameScene.setCenter(verticalB);
+		pane.setCenter(verticalB);
 
 		/**Adds the button into the grid**/
 		addBetCard(grid);
 		addSpots(spotGrid);
 
 		//new scene with root node
-		return new Scene(gameScene, 1000,700);
+		return new Scene(pane, 1000,700);
 	}
 
 	/** Creates a scene for the rules **/
 	public Scene createRulesScene(){
-		rulesScene = new BorderPane();
+		BorderPane rulesPane = new BorderPane();
 
-		rulesScene.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
-		rulesScene.setBottom(returnButton); //We can access return button because it is a class variable
+		rulesPane.setStyle("-fx-background-color: maroon;");
+		rulesPane.setBottom(returnButton); //We can access return button because it is a class variable
 
 		String kenoRules = "Rules of Keno Gambling Game: \n" +
 				"Players wager by choosing a set amount of numbers" +
@@ -165,16 +187,17 @@ public class JavaFXTemplate extends Application {
 		rulesTxt.setText(kenoRules);
 		rulesTxt.setTextAlignment(TextAlignment.CENTER);
 
-		rulesScene.setTop(menu);
-		rulesScene.setCenter(rulesTxt);
+		rulesPane.setTop(menu);
+		rulesPane.setCenter(rulesTxt);
 
-		return new Scene(rulesScene, 1000,700);
+		return new Scene(rulesPane, 1000,700);
 	}
 
 	public Scene createOddsScene()
 	{
 		BorderPane oddsPane = new BorderPane();
-		oddsPane.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
+
+		oddsPane.setStyle("-fx-background-color: #228B22;"); // Forest Green background
 		oddsPane.setBottom(returnButton);
 
 		// Still have to set the odds
@@ -266,8 +289,6 @@ public class JavaFXTemplate extends Application {
 			while(colorPreset == oldPreset){
 				colorPreset = randomNums.nextInt(2);
 			}
-
-			gameScene.setStyle( "-fx-background-color: "+ backgroundColors[colorPreset]);
 
 			returnButton.setStyle(selected[colorPreset] + medButtonSize);
 
@@ -373,32 +394,40 @@ public class JavaFXTemplate extends Application {
 
 		/**The Handler for the Start button**/
 		startHandler = e -> {
-			drawingsSelected = new ArrayList<>();
-			Button b1 = (Button)e.getSource();
-			int temp;
+			//drawingsSelected = new ArrayList<>();
+			if(e.getSource() instanceof Button)
+			{
+				Button b1 = (Button)e.getSource();
 
-			/**Check If the user pressed the necessary things**/
-			if(!gamblePressed || buttonsPress != 0 || !spotSelected){
-				return;
-			}
-
-			gameStarted = true;
-			b1.setDisable(true);
-			randomNums = new Random();
-
-			/**Continues to add numbers to the array list until there are 20 with no dups**/
-			while(drawingsSelected.size() < 20){
-				temp = randomNums.nextInt(80) + 1;
-				if(!drawingsSelected.contains(temp)){
-					drawingsSelected.add(temp);
+				/**Check If the user pressed the necessary things**/
+				if(!gamblePressed || buttonsPress != 0 || !spotSelected){
+					return;
 				}
+
+				gameStarted = true;
+				b1.setDisable(true);
+
 			}
+
+//			//int temp;
+//
+
+
+			//randomNums = new Random();
+
+//			/**Continues to add numbers to the array list until there are 20 with no dups**/
+//			while(drawingsSelected.size() < 20){
+//				temp = randomNums.nextInt(80) + 1;
+//				if(!drawingsSelected.contains(temp)){
+//					drawingsSelected.add(temp);
+//				}
+//			}
 
 			/**Goes through the entire grid and change the colors selected by computer**/
 			for(Node child: grid.getChildren()){
-
 				final Button button = (Button) child;
-				if(drawingsSelected.contains(Integer.parseInt(button.getText().trim()))){
+				//if(drawingsSelected.contains(Integer.parseInt(button.getText().trim()))){
+				if(Integer.parseInt(button.getText().trim()) == drawingsSelected.get(iterator)){
 					//If the computer chose the button and player did not select
 					if(child.getStyle().equals(defaults[colorPreset] + buttonSize)){
 						child.setStyle(computer[colorPreset]+ buttonSize);
@@ -410,6 +439,8 @@ public class JavaFXTemplate extends Application {
 					}
 				}
 			}
+
+			iterator++;
 		};
 
 		/**Handler for the Score Button**/
@@ -429,7 +460,7 @@ public class JavaFXTemplate extends Application {
 			}
 
 			//Get button press for the user
-			while(buttonsPress != 0){
+			while(buttonsPress > 0){
 				int temp = randomNums.nextInt(80) + 1;
 				if(!randomSelected.contains(temp)){
 					randomSelected.add(temp);
@@ -511,4 +542,5 @@ public class JavaFXTemplate extends Application {
 		tempText.setTextAlignment(TextAlignment.CENTER);
 		tempText.setFont(Font.font(20.0));
 	}
+
 }
