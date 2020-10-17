@@ -31,10 +31,11 @@ public class JavaFXTemplate extends Application {
 	private int colorPreset = 0;
 
 	/**Grid Color Schemes**/
-	private final String[] defaults = {"-fx-text-fill: black; -fx-background-color:white; -fx-border-color: black;", "-fx-text-fill: darkblue; -fx-background-color:violet; -fx-border-color: red; "};
-	private final String[] selected = {"-fx-text-fill: red;   -fx-background-color:black; -fx-border-color: white;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
-	private final String[] computer = {"-fx-text-fill: blue;  -fx-background-color:white; -fx-border-color: blue;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
-	private final String[] winnings = {"-fx-text-fill: gold;  -fx-background-color:black; -fx-border-color: gold;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue;"};
+	private final String[] defaults = {"-fx-text-fill: black; -fx-background-color:white; -fx-border-color: black;", "-fx-text-fill: #377178; -fx-background-color:#8AE1EB; -fx-border-color: #377178; "};
+	private final String[] selected = {"-fx-text-fill: red;   -fx-background-color:black; -fx-border-color: white;", "-fx-text-fill: lightblue; -fx-background-color:#377178; -fx-border-color: #8AE1EB; "};
+	private final String[] computer = {"-fx-text-fill: blue;  -fx-background-color:white; -fx-border-color: blue;", "-fx-text-fill: #BDA0BC; -fx-background-color:#8AE1EB; -fx-border-color: #BDA0BC; "};
+	private final String[] winnings = {"-fx-text-fill: gold;  -fx-background-color:black; -fx-border-color: gold;", "-fx-text-fill: #4B296B; -fx-background-color:#8AE1EB; -fx-border-color: #4B296B;"};
+	private final String[] backgroundColors = {"maroon;", "#64C6ED;"};
 	private String buttonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 50; -fx-pref-height: 50";
 	private String medButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 150; -fx-pref-height: 50";
 	private String largeButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 500; -fx-pref-height: 50";
@@ -71,7 +72,6 @@ public class JavaFXTemplate extends Application {
 	private EventHandler<ActionEvent> startHandler;
 	private EventHandler<ActionEvent> scoreHandler;
 	private EventHandler<ActionEvent> randomHandler;
-	private EventHandler<ActionEvent> themeHandler;
 
 	//Array list
 	private ArrayList<String> betStrings;
@@ -87,13 +87,16 @@ public class JavaFXTemplate extends Application {
 
 	private Random randomNums;
 
+	private BorderPane gameScene;
+	private BorderPane rulesScene;
+
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	/**Create the Scene for the Game**/
 	public Scene createGameScene() {
-		BorderPane pane = new BorderPane();
+		gameScene = new BorderPane();
 
 		gambleButton = new Button("Gamble!");
 		gambleButton.setStyle(selected[colorPreset] + medButtonSize);
@@ -115,7 +118,7 @@ public class JavaFXTemplate extends Application {
 		randomButton.setStyle(selected[colorPreset] + medButtonSize);
 		randomButton.setOnAction(randomHandler);
 
-		pane.setStyle("-fx-background-color: maroon;");
+		gameScene.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
 		/**This is the game grid initialization for spot and grid**/
 		grid = new GridPane();
 		spotGrid = new GridPane();
@@ -132,22 +135,22 @@ public class JavaFXTemplate extends Application {
 		scoreHB.setAlignment(Pos.CENTER);
 		settingsHB.setAlignment((Pos.CENTER));
 		verticalB.getChildren().addAll(grid, settingsHB, scoreHB);
-		pane.setCenter(verticalB);
+		gameScene.setCenter(verticalB);
 
 		/**Adds the button into the grid**/
 		addBetCard(grid);
 		addSpots(spotGrid);
 
 		//new scene with root node
-		return new Scene(pane, 1000,700);
+		return new Scene(gameScene, 1000,700);
 	}
 
 	/** Creates a scene for the rules **/
 	public Scene createRulesScene(){
-		BorderPane rulesPane = new BorderPane();
+		rulesScene = new BorderPane();
 
-		rulesPane.setStyle("-fx-background-color: maroon;");
-		rulesPane.setBottom(returnButton); //We can access return button because it is a class variable
+		rulesScene.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
+		rulesScene.setBottom(returnButton); //We can access return button because it is a class variable
 
 		String kenoRules = "Rules of Keno Gambling Game: \n" +
 				"Players wager by choosing a set amount of numbers" +
@@ -162,17 +165,16 @@ public class JavaFXTemplate extends Application {
 		rulesTxt.setText(kenoRules);
 		rulesTxt.setTextAlignment(TextAlignment.CENTER);
 
-		rulesPane.setTop(menu);
-		rulesPane.setCenter(rulesTxt);
+		rulesScene.setTop(menu);
+		rulesScene.setCenter(rulesTxt);
 
-		return new Scene(rulesPane, 1000,700);
+		return new Scene(rulesScene, 1000,700);
 	}
 
 	public Scene createOddsScene()
 	{
 		BorderPane oddsPane = new BorderPane();
-
-		oddsPane.setStyle("-fx-background-color: #228B22;"); // Forest Green background
+		oddsPane.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
 		oddsPane.setBottom(returnButton);
 
 		// Still have to set the odds
@@ -264,6 +266,8 @@ public class JavaFXTemplate extends Application {
 			while(colorPreset == oldPreset){
 				colorPreset = randomNums.nextInt(2);
 			}
+
+			gameScene.setStyle( "-fx-background-color: "+ backgroundColors[colorPreset]);
 
 			returnButton.setStyle(selected[colorPreset] + medButtonSize);
 
@@ -392,6 +396,7 @@ public class JavaFXTemplate extends Application {
 
 			/**Goes through the entire grid and change the colors selected by computer**/
 			for(Node child: grid.getChildren()){
+
 				final Button button = (Button) child;
 				if(drawingsSelected.contains(Integer.parseInt(button.getText().trim()))){
 					//If the computer chose the button and player did not select
@@ -424,7 +429,7 @@ public class JavaFXTemplate extends Application {
 			}
 
 			//Get button press for the user
-			while(buttonsPress > 0){
+			while(buttonsPress != 0){
 				int temp = randomNums.nextInt(80) + 1;
 				if(!randomSelected.contains(temp)){
 					randomSelected.add(temp);
@@ -506,5 +511,4 @@ public class JavaFXTemplate extends Application {
 		tempText.setTextAlignment(TextAlignment.CENTER);
 		tempText.setFont(Font.font(20.0));
 	}
-
 }
