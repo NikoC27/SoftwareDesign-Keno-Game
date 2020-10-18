@@ -6,11 +6,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,10 +27,12 @@ public class JavaFXTemplate extends Application {
 	private int colorPreset = 0;
 
 	/**Grid Color Schemes**/
-	private final String[] defaults = {"-fx-text-fill: black; -fx-background-color:white; -fx-border-color: black;", "-fx-text-fill: darkblue; -fx-background-color:violet; -fx-border-color: red; "};
-	private final String[] selected = {"-fx-text-fill: red;   -fx-background-color:black; -fx-border-color: white;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
-	private final String[] computer = {"-fx-text-fill: blue;  -fx-background-color:white; -fx-border-color: blue;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue; "};
-	private final String[] winnings = {"-fx-text-fill: gold;  -fx-background-color:black; -fx-border-color: gold;", "-fx-text-fill: black; -fx-background-color:lightgreen; -fx-border-color: blue;"};
+	private final String[] defaults = {"-fx-text-fill: black; -fx-background-color:white; -fx-border-color: black;", "-fx-text-fill: #377178; -fx-background-color:#8AE1EB; -fx-border-color: #377178; "};
+	private final String[] selected = {"-fx-text-fill: red;   -fx-background-color:black; -fx-border-color: white;", "-fx-text-fill: lightblue; -fx-background-color:#377178; -fx-border-color: #8AE1EB; "};
+	private final String[] computer = {"-fx-text-fill: blue;  -fx-background-color:white; -fx-border-color: blue;", "-fx-text-fill: #BDA0BC; -fx-background-color:#8AE1EB; -fx-border-color: #BDA0BC; "};
+	private final String[] winnings = {"-fx-text-fill: gold;  -fx-background-color:black; -fx-border-color: gold;", "-fx-text-fill: #4B296B; -fx-background-color:#8AE1EB; -fx-border-color: #4B296B;"};
+	private final String[] backgroundColors = {"maroon;", "#64C6ED;"};
+
 	private String buttonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 50; -fx-pref-height: 50";
 	private String medButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 150; -fx-pref-height: 50";
 	private String largeButtonSize = "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 500; -fx-pref-height: 50";
@@ -44,6 +42,7 @@ public class JavaFXTemplate extends Application {
 	private boolean gamblePressed;
 	private boolean spotSelected;
 
+
 	//Important Buttons
 	private Button returnButton;
 	private Button gambleButton;
@@ -51,6 +50,7 @@ public class JavaFXTemplate extends Application {
 	private Button startButton;
 	private Button scoreButton;
 	private Button randomButton;
+
 
 	//Menu
 	public MenuBar menu;
@@ -71,6 +71,7 @@ public class JavaFXTemplate extends Application {
 	private EventHandler<ActionEvent> startHandler;
 	private EventHandler<ActionEvent> scoreHandler;
 	private EventHandler<ActionEvent> randomHandler;
+	private EventHandler<ActionEvent> drawingsHandler;
 	private EventHandler<ActionEvent> themeHandler;
 
 
@@ -83,9 +84,17 @@ public class JavaFXTemplate extends Application {
 	private GridPane grid;
 	private GridPane spotGrid;
 
+	// The two border panes
+	private BorderPane gameScene;
+	private BorderPane rulesScene;
+
+	private ComboBox<Integer> drawings;
+
 	private int buttonsPress;
 	private int matchingPress;
+	private int drawingPressed;
 	private int iterator = 0;
+
 
 	private Random randomNums;
 	private Timeline timeline;
@@ -93,7 +102,6 @@ public class JavaFXTemplate extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-
 
 	public void addToDrawingsSelected()
 	{
@@ -109,15 +117,22 @@ public class JavaFXTemplate extends Application {
 			}
 	}
 
+	public void createComboBox(){
+		drawings = new ComboBox<>();
+		drawings.setPromptText("Draw a Value");
+		drawings.getItems().addAll(1, 2, 3, 4);
+	}
+
+
 	/**Create the Scene for the Game**/
 	public Scene createGameScene() {
-		BorderPane pane = new BorderPane();
+		gameScene = new BorderPane();
 
 		gambleButton = new Button("Gamble!");
 		gambleButton.setStyle(selected[colorPreset] + medButtonSize);
 		gambleButton.setOnAction(gambleHandler);
 
-		resetButton = new Button("Reset Game");
+		resetButton = new Button("Next Draw");
 		resetButton.setStyle(selected[colorPreset] + medButtonSize);
 		resetButton.setOnAction(resetHandler);
 
@@ -126,6 +141,9 @@ public class JavaFXTemplate extends Application {
 		);
 
 		timeline.setCycleCount(20);
+
+		createComboBox();
+		drawings.setOnAction(drawingsHandler);
 
 		startButton = new Button("Start");
 		startButton.setStyle(selected[colorPreset] + medButtonSize);
@@ -137,11 +155,16 @@ public class JavaFXTemplate extends Application {
 		scoreButton.setStyle(winnings[colorPreset] + largeButtonSize);
 		scoreButton.setOnAction(scoreHandler);
 
-		randomButton= new Button("Select Random");
+		randomButton= new Button("Random");
 		randomButton.setStyle(selected[colorPreset] + medButtonSize);
 		randomButton.setOnAction(randomHandler);
 
-		pane.setStyle("-fx-background-color: maroon;");
+
+
+		drawings.setStyle(selected[colorPreset] + medButtonSize);
+
+
+		gameScene.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
 		/**This is the game grid initialization for spot and grid**/
 		grid = new GridPane();
 		spotGrid = new GridPane();
@@ -152,28 +175,33 @@ public class JavaFXTemplate extends Application {
 		gambleHB.setAlignment(Pos.CENTER);
 
 		//Creating the vertical box
-		VBox verticalB = new VBox(25, menu, spotGrid, gambleHB);
+		VBox verticalB = new VBox(25,spotGrid, gambleHB);
 		HBox settingsHB = new HBox(25, startButton, randomButton, resetButton);
 		HBox scoreHB = new HBox(25, scoreButton);
+		HBox drawingsHB = new HBox(25, drawings);
+
+		drawingsHB.setAlignment(Pos.CENTER_LEFT);
 		scoreHB.setAlignment(Pos.CENTER);
 		settingsHB.setAlignment((Pos.CENTER));
 		verticalB.getChildren().addAll(grid, settingsHB, scoreHB);
-		pane.setCenter(verticalB);
+		gameScene.setCenter(verticalB);
+		gameScene.setLeft(drawingsHB);
+		gameScene.setTop(menu);
 
 		/**Adds the button into the grid**/
 		addBetCard(grid);
 		addSpots(spotGrid);
 
 		//new scene with root node
-		return new Scene(pane, 1000,700);
+		return new Scene(gameScene, 1000,700);
 	}
 
 	/** Creates a scene for the rules **/
 	public Scene createRulesScene(){
-		BorderPane rulesPane = new BorderPane();
+		rulesScene = new BorderPane();
 
-		rulesPane.setStyle("-fx-background-color: maroon;");
-		rulesPane.setBottom(returnButton); //We can access return button because it is a class variable
+		rulesScene.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
+		rulesScene.setBottom(returnButton); //We can access return button because it is a class variable
 
 		String kenoRules = "Rules of Keno Gambling Game: \n" +
 				"Players wager by choosing a set amount of numbers" +
@@ -188,17 +216,17 @@ public class JavaFXTemplate extends Application {
 		rulesTxt.setText(kenoRules);
 		rulesTxt.setTextAlignment(TextAlignment.CENTER);
 
-		rulesPane.setTop(menu);
-		rulesPane.setCenter(rulesTxt);
+		rulesScene.setTop(menu);
+		rulesScene.setCenter(rulesTxt);
 
-		return new Scene(rulesPane, 1000,700);
+		return new Scene(rulesScene, 1000,700);
 	}
 
 	public Scene createOddsScene()
 	{
 		BorderPane oddsPane = new BorderPane();
+		oddsPane.setStyle("-fx-background-color: "+ backgroundColors[colorPreset]);
 
-		oddsPane.setStyle("-fx-background-color: #228B22;"); // Forest Green background
 		oddsPane.setBottom(returnButton);
 
 		// Still have to set the odds
@@ -291,6 +319,7 @@ public class JavaFXTemplate extends Application {
 				colorPreset = randomNums.nextInt(2);
 			}
 
+			gameScene.setStyle( "-fx-background-color: "+ backgroundColors[colorPreset]);
 			returnButton.setStyle(selected[colorPreset] + medButtonSize);
 
 			if(gambleButton.getStyle().equals(selected[oldPreset] + largeButtonSize)){
@@ -300,6 +329,7 @@ public class JavaFXTemplate extends Application {
 				gambleButton.setStyle(selected[colorPreset] + medButtonSize);
 			}
 
+			drawings.setStyle(selected[colorPreset] + medButtonSize);
 			resetButton.setStyle(selected[colorPreset] + medButtonSize);
 			startButton.setStyle(selected[colorPreset] + medButtonSize);
 			scoreButton.setStyle(winnings[colorPreset] + largeButtonSize);
@@ -360,12 +390,13 @@ public class JavaFXTemplate extends Application {
 			String buttonNum = ((Button)e.getSource()).getText();
 			buttonsPress = Integer.parseInt(buttonNum.trim());  //String to Int
 			spotSelected = true;
-			toggleGrid(spotGrid, true);
+			toggleGrid(spotGrid, false);
 		};
 
 		gambleHandler = e -> {
 			if(buttonsPress > 0){
 				toggleGrid(grid, false);
+				toggleGrid(spotGrid, true);
 				Button b1 = (Button)e.getSource();
 				b1.setStyle(selected[colorPreset] + largeButtonSize);
 				b1.setText("Number of Spots: " + buttonsPress);
@@ -390,6 +421,7 @@ public class JavaFXTemplate extends Application {
 			gameStarted = false;
 			gamblePressed = false;
 			spotSelected = false;
+			drawingPressed--;
 			buttonsPress = 0;
 			matchingPress = 0;
 			iterator = 0;
@@ -399,6 +431,10 @@ public class JavaFXTemplate extends Application {
 		startHandler = e -> {
 			//drawingsSelected = new ArrayList<>();
 			/**Check If the user pressed the necessary things**/
+			if(drawingPressed == 0){
+				return;
+			}
+
 			if(!gamblePressed || buttonsPress != 0 || !spotSelected){
 				return;
 			}
@@ -453,9 +489,10 @@ public class JavaFXTemplate extends Application {
 		randomHandler = e->{
 			randomNums = new Random();
 			randomSelected = new ArrayList<>();
-			if(!(buttonsPress > 0) || !gamblePressed || !spotSelected){
+			if(drawingPressed == 0 || !(buttonsPress > 0) || !gamblePressed || !spotSelected){
 				return;
 			}
+
 
 			//Get button press for the user
 			while(buttonsPress > 0){
@@ -475,6 +512,34 @@ public class JavaFXTemplate extends Application {
 				}
 			}
 		};
+
+
+		drawingsHandler = e-> {
+
+			switch(drawings.getValue()){
+				case 1:
+					drawingPressed = 1;
+					break;
+
+				case 2:
+					drawingPressed = 2;
+					break;
+
+				case 3:
+					drawingPressed = 3;
+					break;
+
+				case 4:
+					drawingPressed = 4;
+					break;
+
+				default:
+					drawingPressed = 0;
+					break;
+			};
+
+	    };
+
 
 		/*********************************************************************************************************/
 
