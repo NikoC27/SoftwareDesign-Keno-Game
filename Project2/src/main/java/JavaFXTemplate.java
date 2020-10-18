@@ -132,7 +132,7 @@ public class JavaFXTemplate extends Application {
 		welcomeScene = new BorderPane();
 		welcomeTxt = new Text("Welcome to Keno!");
 		welcomeTxt.setFont(javafx.scene.text.Font.font(null, FontWeight.BOLD, 30));
-		welcomeButton.setStyle(winnings[0] + medButtonSize);
+		welcomeButton.setStyle(winnings[0] + "-fx-font-weight: bold; -fx-border-width: 5; -fx-pref-width: 200; -fx-pref-height: 50");
 		VBox welcomeBox = new VBox(40 ,welcomeTxt, welcomeButton);
 		welcomeBox.setAlignment(Pos.CENTER);
 		welcomeScene.setCenter(welcomeBox);
@@ -414,12 +414,12 @@ public class JavaFXTemplate extends Application {
 			String buttonNum = ((Button)e.getSource()).getText();
 			buttonsPress = Integer.parseInt(buttonNum.trim());  //String to Int
 			spotSelected = true;
-			toggleGrid(spotGrid, false);
 		};
 
 		gambleHandler = e -> {
 			if(buttonsPress > 0 && drawingPressed > 0){
-				toggleGrid(grid, false);
+//				toggleGrid(grid, false);
+				grid.setMouseTransparent(false);
 				toggleGrid(spotGrid, true);
 				Button b1 = (Button)e.getSource();
 				b1.setStyle(selected[colorPreset] + largeButtonSize);
@@ -440,13 +440,14 @@ public class JavaFXTemplate extends Application {
 
 				resetButton.setText("Next Draw");
 				toggleGrid(spotGrid, false);
-				toggleGrid(grid, true);
+				grid.setMouseTransparent(true);
 				resetGameGrid(grid);
 				//Reset and re-enabling the buttons
 				gambleButton.setText("Gamble!");
 				gambleButton.setStyle(selected[colorPreset] + medButtonSize);
 				gamblePressed = false;
 				spotSelected = false;
+				randomButton.setDisable(false);
 			}
 
 			/**Goes through the entire grid and change the colors selected by computer**/
@@ -467,7 +468,6 @@ public class JavaFXTemplate extends Application {
 			startButton.setDisable(false);
 			scoreButton.setText("Click to Reveal Score!");
 			gameStarted = false;
-
 
 			drawingPressed--;
 			buttonsPress = 0;
@@ -491,17 +491,14 @@ public class JavaFXTemplate extends Application {
 			if(!gamblePressed || buttonsPress != 0 || !spotSelected){
 				return;
 			}
-
-			gameStarted = true;
-
-			if(e.getSource() instanceof Button)
-			{
-				Button b1 = (Button)e.getSource();
-				b1.setDisable(true);
+			else{
+				gameStarted = true;
 			}
 
 
-			toggleGrid(grid, true);
+			startButton.setDisable(true);
+			randomButton.setDisable(true);
+
 
 			/**Goes through the entire grid and change the colors selected by computer**/
 			for(Node child: grid.getChildren()){
@@ -622,7 +619,6 @@ public class JavaFXTemplate extends Application {
 				Button bets = new Button(Integer.toString(1+i+x*10));
 				bets.setStyle(defaults[colorPreset] + buttonSize);
 				bets.setOnAction(betHandler);
-				bets.setDisable(true);
 				grid.add(bets, i, x);
 			}
 		}
