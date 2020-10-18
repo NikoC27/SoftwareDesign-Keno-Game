@@ -158,15 +158,20 @@ public class JavaFXTemplate extends Application {
 			new KeyFrame(Duration.millis(200), startHandler)
 		);
 
-		timeline.setCycleCount(20);
+		addToDrawingsSelected();
+		timeline.setCycleCount(drawingsSelected.size());
 
 		createComboBox();
 		drawings.setOnAction(drawingsHandler);
 
 		startButton = new Button("Start");
 		startButton.setStyle(selected[colorPreset] + medButtonSize);
+		startButton.setDisable(true);
 		startButton.setOnAction(e->{
-			addToDrawingsSelected(); timeline.play();
+			if(buttonsPress == 0){
+				timeline.play();
+			}
+
 		});
 
 		scoreButton = new Button("Click to Reveal Score!");
@@ -418,13 +423,14 @@ public class JavaFXTemplate extends Application {
 
 		gambleHandler = e -> {
 			if(buttonsPress > 0 && drawingPressed > 0){
-//				toggleGrid(grid, false);
 				grid.setMouseTransparent(false);
 				toggleGrid(spotGrid, true);
 				Button b1 = (Button)e.getSource();
 				b1.setStyle(selected[colorPreset] + largeButtonSize);
 				b1.setText("Number of Spots: " + buttonsPress);
 				gamblePressed = true;
+				startButton.setDisable(false);
+				System.out.println(buttonsPress);
 			}
 		};
 
@@ -448,6 +454,7 @@ public class JavaFXTemplate extends Application {
 				gamblePressed = false;
 				spotSelected = false;
 				randomButton.setDisable(false);
+
 			}
 
 			/**Goes through the entire grid and change the colors selected by computer**/
@@ -468,6 +475,7 @@ public class JavaFXTemplate extends Application {
 			startButton.setDisable(false);
 			scoreButton.setText("Click to Reveal Score!");
 			gameStarted = false;
+			addToDrawingsSelected();
 
 			drawingPressed--;
 			buttonsPress = 0;
@@ -484,22 +492,17 @@ public class JavaFXTemplate extends Application {
 			if(drawingPressed == 0){
 				return;
 			}
-			if(drawingPressed == 1){
-				resetButton.setText("New Game");
-			}
-
 			if(!gamblePressed || buttonsPress != 0 || !spotSelected){
 				return;
 			}
-			else{
-				gameStarted = true;
+			if(drawingPressed == 1){
+				resetButton.setText("New Game");
 			}
-
-
+			System.out.println("WHY ARE YOU HERE");
+			gameStarted = true;
 			startButton.setDisable(true);
 			randomButton.setDisable(true);
-
-
+			System.out.println(iterator);
 			/**Goes through the entire grid and change the colors selected by computer**/
 			for(Node child: grid.getChildren()){
 				final Button button = (Button) child;
@@ -532,7 +535,7 @@ public class JavaFXTemplate extends Application {
 		randomHandler = e->{
 			randomNums = new Random();
 			randomSelected = new ArrayList<>();
-			if(drawingPressed == 0 || !(buttonsPress > 0) || !gamblePressed || !spotSelected){
+			if(drawingPressed == 0 || buttonsPress == 0 || !gamblePressed || !spotSelected){
 				return;
 			}
 
