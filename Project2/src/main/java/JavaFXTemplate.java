@@ -97,8 +97,10 @@ public class JavaFXTemplate extends Application {
 	private int buttonsPress;
 	private int matchingPress;
 	private int drawingPressed;
+	private int saveDrawNumber;
 	private int iterator = 0;
 	private int moneyEarned = 0;
+	private int spotNumber;
 
 	private Random randomNums;
 	private Timeline timeline;
@@ -119,6 +121,84 @@ public class JavaFXTemplate extends Application {
 					drawingsSelected.add(temp);
 				}
 			}
+	}
+
+	public void calcTotalMoney(){
+		if(spotNumber == 1){
+			switch(matchingPress){
+				case 1:
+					moneyEarned += 2;
+					break;
+				default:
+					break;
+			};
+		}
+
+		if(spotNumber == 4) {
+			switch (matchingPress) {
+				case 2:
+					moneyEarned += 1;
+					break;
+				case 3:
+					moneyEarned += 5;
+					break;
+				case 4:
+					moneyEarned += 75;
+					break;
+				default:
+					break;
+			};
+		}
+
+		if(spotNumber == 8){
+			switch(matchingPress){
+				case 4:
+					moneyEarned += 2;
+					break;
+				case 5:
+					moneyEarned += 12;
+					break;
+				case 6:
+					moneyEarned += 50;
+					break;
+				case 7:
+					moneyEarned += 750;
+					break;
+				case 8:
+					moneyEarned += 10000;
+					break;
+				default:
+					break;
+			};
+		}
+
+		if(spotNumber == 10){
+			switch(matchingPress){
+				case 0:
+					moneyEarned += 5;
+					break;
+				case 5:
+					moneyEarned += 2;
+					break;
+				case 6:
+					moneyEarned += 15;
+					break;
+				case 7:
+					moneyEarned += 40;
+					break;
+				case 8:
+					moneyEarned += 450;
+					break;
+				case 9:
+					moneyEarned += 4250;
+					break;
+				case 10:
+					moneyEarned += 100000;
+					break;
+				default:
+					break;
+			};
+		}
 	}
 
 	public void createComboBox(){
@@ -418,6 +498,7 @@ public class JavaFXTemplate extends Application {
 		spotHandler = e -> {
 			String buttonNum = ((Button)e.getSource()).getText();
 			buttonsPress = Integer.parseInt(buttonNum.trim());  //String to Int
+			spotNumber = buttonsPress;
 			spotSelected = true;
 		};
 
@@ -430,7 +511,7 @@ public class JavaFXTemplate extends Application {
 				b1.setText("Number of Spots: " + buttonsPress);
 				gamblePressed = true;
 				startButton.setDisable(false);
-				System.out.println(buttonsPress);
+				drawings.setDisable(true);
 			}
 		};
 
@@ -442,8 +523,10 @@ public class JavaFXTemplate extends Application {
 				return;
 			}
 
+			// Reset the board to a new game
 			if(drawingPressed == 1 && iterator == 20){
 
+				drawingPressed = saveDrawNumber + 1;
 				resetButton.setText("Next Draw");
 				toggleGrid(spotGrid, false);
 				grid.setMouseTransparent(true);
@@ -454,6 +537,7 @@ public class JavaFXTemplate extends Application {
 				gamblePressed = false;
 				spotSelected = false;
 				randomButton.setDisable(false);
+				drawings.setDisable(false);
 
 			}
 
@@ -468,7 +552,6 @@ public class JavaFXTemplate extends Application {
 					// Change matching squares back to selected squares
 					if(child.getStyle().equals(winnings[colorPreset] + buttonSize)){
 						child.setStyle(selected[colorPreset] + buttonSize);
-						matchingPress++;
 					}
 				}
 
@@ -476,6 +559,7 @@ public class JavaFXTemplate extends Application {
 			scoreButton.setText("Click to Reveal Score!");
 			gameStarted = false;
 			addToDrawingsSelected();
+
 
 			drawingPressed--;
 			buttonsPress = 0;
@@ -498,11 +582,13 @@ public class JavaFXTemplate extends Application {
 			if(drawingPressed == 1){
 				resetButton.setText("New Game");
 			}
-			System.out.println("WHY ARE YOU HERE");
+
 			gameStarted = true;
 			startButton.setDisable(true);
 			randomButton.setDisable(true);
-			System.out.println(iterator);
+			grid.setMouseTransparent(true);
+
+
 			/**Goes through the entire grid and change the colors selected by computer**/
 			for(Node child: grid.getChildren()){
 				final Button button = (Button) child;
@@ -521,13 +607,27 @@ public class JavaFXTemplate extends Application {
 			}
 
 			iterator++;
+			if(iterator == 20)
+			{
+				calcTotalMoney();
+			}
 		};
 
 		/**Handler for the Score Button**/
 		scoreHandler = e->{
+
 			Button b1 = (Button)e.getSource();
 			if(gameStarted && spotSelected && gamblePressed && (buttonsPress == 0)) {
-				b1.setText("Matching Score: " + matchingPress);
+				if(drawingPressed == 1)
+				{
+					// Display final matches and money earned
+					b1.setText("Congrats you've won $" + moneyEarned + "!");
+				}
+				else
+				{
+					b1.setText("Matching Score: " + matchingPress);
+				}
+
 			}
 		};
 
@@ -535,10 +635,11 @@ public class JavaFXTemplate extends Application {
 		randomHandler = e->{
 			randomNums = new Random();
 			randomSelected = new ArrayList<>();
-			if(drawingPressed == 0 || buttonsPress == 0 || !gamblePressed || !spotSelected){
+			buttonsPress = spotNumber;
+
+			if(drawingPressed == 0 || !gamblePressed || !spotSelected){
 				return;
 			}
-
 
 			//Get button press for the user
 			while(buttonsPress > 0){
@@ -549,9 +650,21 @@ public class JavaFXTemplate extends Application {
 				}
 			}
 
-			//Show the button pressed the computer chose
+			// Loop used to reset the random spots
+//			for(Node child: grid.getChildren()){
+//				if(child.getStyle().equals(selected[colorPreset] + buttonSize)){
+//					child.setStyle(defaults[colorPreset] + buttonSize);
+//					gambleButton.setText("Number of Spots: " + buttonsPress);
+//				}
+//			}
+
+			// Show the button pressed the computer chose
 			for(Node child: grid.getChildren()){
 				final Button button = (Button) child;
+				if(child.getStyle().equals(selected[colorPreset] + buttonSize)){
+					child.setStyle(defaults[colorPreset] + buttonSize);
+					gambleButton.setText("Number of Spots: " + buttonsPress);
+				}
 				if(randomSelected.contains(Integer.parseInt(button.getText().trim()))){
 					child.setStyle(selected[colorPreset] + buttonSize);
 					gambleButton.setText("Number of Spots: " + buttonsPress);
@@ -565,18 +678,22 @@ public class JavaFXTemplate extends Application {
 			switch(drawings.getValue()){
 				case 1:
 					drawingPressed = 1;
+					saveDrawNumber = drawingPressed;
 					break;
 
 				case 2:
 					drawingPressed = 2;
+					saveDrawNumber = drawingPressed;
 					break;
 
 				case 3:
 					drawingPressed = 3;
+					saveDrawNumber = drawingPressed;
 					break;
 
 				case 4:
 					drawingPressed = 4;
+					saveDrawNumber = drawingPressed;
 					break;
 
 				default:
