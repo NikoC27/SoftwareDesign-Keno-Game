@@ -113,6 +113,7 @@ public class JavaFXTemplate extends Application {
 	{
 		int temp;
 		randomNums = new Random();
+		drawingsSelected.clear();
 
 		/**Continues to add numbers to the array list until there are 20 with no dups**/
 			while(drawingsSelected.size() < 20){
@@ -279,17 +280,17 @@ public class JavaFXTemplate extends Application {
 		gambleHB.setAlignment(Pos.CENTER);
 
 		//Creating the vertical box
-		VBox verticalB = new VBox(25,spotGrid, gambleHB);
+		HBox drawAndSpotHB = new HBox(25,drawings, spotGrid);
+		drawAndSpotHB.setAlignment(Pos.TOP_CENTER);
+		VBox verticalB = new VBox(25,drawAndSpotHB, gambleHB);
 		HBox settingsHB = new HBox(25, startButton, randomButton, resetButton);
 		HBox scoreHB = new HBox(25, scoreButton);
-		HBox drawingsHB = new HBox(25, drawings);
 
-		drawingsHB.setAlignment(Pos.CENTER_LEFT);
 		scoreHB.setAlignment(Pos.CENTER);
 		settingsHB.setAlignment((Pos.CENTER));
 		verticalB.getChildren().addAll(grid, settingsHB, scoreHB);
 		gameScene.setCenter(verticalB);
-		gameScene.setLeft(drawingsHB);
+
 		gameScene.setTop(menu);
 
 		/**Adds the button into the grid**/
@@ -558,6 +559,7 @@ public class JavaFXTemplate extends Application {
 			startButton.setDisable(false);
 			scoreButton.setText("Click to Reveal Score!");
 			gameStarted = false;
+			drawingsSelected.clear();
 			addToDrawingsSelected();
 
 
@@ -650,7 +652,7 @@ public class JavaFXTemplate extends Application {
 				}
 			}
 
-			// Loop used to reset the random spots
+//			 // Loop used to reset the random spots
 //			for(Node child: grid.getChildren()){
 //				if(child.getStyle().equals(selected[colorPreset] + buttonSize)){
 //					child.setStyle(defaults[colorPreset] + buttonSize);
